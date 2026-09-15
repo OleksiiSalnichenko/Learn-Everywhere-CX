@@ -13,6 +13,7 @@ interface DictionaryRepository {
     suspend fun getDictionary(id: String): Dictionary?
     suspend fun getDefault(language: Language): Dictionary?
     suspend fun getWords(dictionaryId: String): List<WordEntry>
+    suspend fun getTransferSnapshot(ids: List<String>? = null): List<DictionaryExportSnapshot>
     suspend fun create(language: Language, name: String): Dictionary
     suspend fun rename(id: String, name: String)
     suspend fun setDefault(id: String)
@@ -38,6 +39,18 @@ class RoomDictionaryRepository(private val database: DictionaryDatabase) : Dicti
     override suspend fun getDictionary(id: String) = dao.dictionary(id)
     override suspend fun getDefault(language: Language) = dao.defaultDictionary(language)
     override suspend fun getWords(dictionaryId: String) = dao.words(dictionaryId)
+    override suspend fun getTransferSnapshot(ids: List<String>?): List<DictionaryExportSnapshot> = database.withTransaction {
+        // All reads share one database version, including names, defaults and complete word lists.
+        val dictionaries = Language.entries.flatMap { dao.dictionaries(it) }
+        val selectedIds = ids?.toSet()
+        if (selectedIds != null && !dictionaries.map { it.id }.toSet().containsAll(selectedIds)) {
+            throw RepositoryException(Reason.MISSING_DICTIONARY)
+        }
+        val defaults = Language.entries.associateWith { dao.defaultDictionary(it)?.id }
+        dictionaries.filter { selectedIds == null || it.id in selectedIds }.map { dictionary ->
+            DictionaryExportSnapshot(dictionary, dao.words(dictionary.id), defaults[dictionary.language] == dictionary.id)
+        }
+    }
     override suspend fun create(language: Language, name: String): Dictionary = database.withTransaction {
         val clean = validName(name)
         if (dao.dictionaries(language).any { it.nameKey == key(clean) }) throw RepositoryException(Reason.DUPLICATE_NAME)

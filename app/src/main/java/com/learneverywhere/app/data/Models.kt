@@ -45,3 +45,6 @@ class LanguageConverters {
     @TypeConverter fun encode(language: Language): String = language.code
     @TypeConverter fun decode(value: String): Language = Language.entries.first { it.code == value }
 }
+
+/** Immutable export data read together at one database version. */
+data class DictionaryExportSnapshot(val dictionary: Dictionary, val words: List<WordEntry>, val isDefault: Boolean)

@@ -3,6 +3,7 @@ package com.learneverywhere.app.data
 import androidx.test.core.app.ApplicationProvider
 import androidx.room.Room
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import org.junit.*
 import org.junit.Assert.*
@@ -122,5 +123,43 @@ class DictionaryRepositoryTest {
             ImportDictionary(Language.EN, "English second", emptyList()),
         ))
         assertEquals(english[0].id, repository.getDefault(Language.EN)?.id)
+    }
+    @Test fun transferSnapshotIncludesCompleteOrderedWordsAndKeepsItsOriginalValues() = runBlocking {
+        val english = repository.create(Language.EN, "English")
+        val contents = (1..105).map { WordContent("слово $it", "Wort $it", null, "Das ist Wort $it.") }
+        val german = repository.importDictionaries(listOf(ImportDictionary(Language.DE, "German", contents))).single()
+        val other = repository.create(Language.DE, "Other")
+        repository.setDefault(other.id)
+        val snapshot = repository.getTransferSnapshot()
+        assertEquals(listOf(german.id, other.id, english.id), snapshot.map { it.dictionary.id })
+        assertEquals((1..105).map { "Wort $it" }, snapshot[0].words.map { it.content.translation1 })
+        assertEquals(listOf(false, true, true), snapshot.map { it.isDefault })
+        repository.rename(german.id, "Changed")
+        repository.updateWord(snapshot[0].words[0].id, contents[0].copy(translation1 = "Changed"))
+        repository.setDefault(german.id)
+        assertEquals("German", snapshot[0].dictionary.name)
+        assertEquals("Wort 1", snapshot[0].words[0].content.translation1)
+        assertFalse(snapshot[0].isDefault)
+        assertEquals(listOf(german.id, english.id), repository.getTransferSnapshot(listOf(english.id, german.id, german.id)).map { it.dictionary.id })
+        assertTrue(repository.getTransferSnapshot(emptyList()).isEmpty())
+        // Export overlapping atomic imports must see each complete batch, never half a batch.
+        val writer = async(kotlinx.coroutines.Dispatchers.Default) {
+            repeat(8) { batch ->
+                repository.importDictionaries(listOf(
+                    ImportDictionary(Language.EN, "batch$batch:a", listOf(contents[0])),
+                    ImportDictionary(Language.EN, "batch$batch:b", listOf(contents[1])),
+                ))
+            }
+        }
+        repeat(16) {
+            val batches = repository.getTransferSnapshot().filter { it.dictionary.name.startsWith("batch") }
+            batches.groupBy { it.dictionary.name.substringBefore(':') }.values.forEach { pair ->
+                assertEquals(2, pair.size)
+                assertTrue(pair.all { it.words.size == 1 })
+            }
+        }
+        writer.await()
+        try { repository.getTransferSnapshot(listOf(german.id, "missing")); fail("No partial export for missing ID") }
+        catch (error: RepositoryException) { assertEquals(RepositoryException.Reason.MISSING_DICTIONARY, error.reason) }
     }
 }

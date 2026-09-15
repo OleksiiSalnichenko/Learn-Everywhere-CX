@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "AGENTS.md",
   "skillDir": "/home/osalnichenko/.agents/skills/autopilot",
   "startedAt": "2026-09-14T20:08:30+02:00",
-  "updatedAt": "2026-09-15T18:05:22+02:00",
+  "updatedAt": "2026-09-15T23:21:27+02:00",
   "finishedAt": null,
   "stages": [
     {
@@ -355,6 +355,11 @@ window.STATE =
       "quote": "го",
       "effect": "Resume Wave 2 after temporary subagent usage limit",
       "at": "2026-09-15T17:57:39+02:00"
+    },
+    {
+      "quote": "го",
+      "effect": "Resume Wave 2 again after subagent usage reset",
+      "at": "2026-09-15T23:13:08+02:00"
     }
   ],
   "coverage": {
@@ -427,11 +432,15 @@ window.STATE =
     "projectId": "learn-everywhere",
     "plan": "Spark",
     "createdNew": true,
-    "aiLogicStatus": "console-reports-missing-permissions",
-    "observedMessage": "To manage Firebase AI Logic, ask a project owner for the necessary permissions",
-    "checkedAt": "2026-09-15T12:35:13+02:00",
+    "aiLogicStatus": "wizard-awaits-Gemini-Additional-Terms",
+    "observedMessage": "By continuing, you agree to the Gemini API Additional Terms of Service and Additional usage policies",
+    "checkedAt": "2026-09-15T23:21:27+02:00",
     "iamAuditStatus": "Google Cloud first-visit Terms of Service modal; no acceptance submitted",
-    "iamAuditUrl": "https://console.cloud.google.com/iam-admin/iam?project=learn-everywhere"
+    "iamAuditUrl": "https://console.cloud.google.com/iam-admin/iam?project=learn-everywhere",
+    "androidAppPackage": "com.learneverywhere.app",
+    "androidAppStatus": "registered",
+    "configStatus": "download-clicked-but-no-new-file-in-workspace; old Downloads file discarded without use",
+    "billingStatus": "Spark; Gemini Developer API no-cost selected; no Blaze or billing enabled"
   },
   "ticketReviews": {
     "01": {
@@ -463,6 +472,17 @@ window.STATE =
     "finishedAt": "2026-09-15T18:05:22+02:00",
     "reviewer": "/root/w2_seam_review",
     "review": "passed",
-    "tests": "assembleDebug, assembleRelease, seven repository tests passed; live Firebase unconfigured"
+    "tests": "assembleDebug, assembleRelease, seven repository tests passed; live Firebase unconfigured",
+    "commit": "a8701d3",
+    "pushedAt": "2026-09-15T23:13:08+02:00"
+  },
+  "wave2ExportSnapshot": {
+    "owner": "/root/t01_foundation",
+    "status": "done",
+    "resumedAt": "2026-09-15T23:13:08+02:00",
+    "purpose": "One Room read transaction for one/all JSON export",
+    "finishedAt": "2026-09-15T23:21:27+02:00",
+    "tests": "Eight repository tests passed; full Wave2 build 18 unit tests, debug/release/test APK passed",
+    "review": "ticket02 Manifest+Spec reviewer confirmed coherent one-transaction export"
   }
 }
