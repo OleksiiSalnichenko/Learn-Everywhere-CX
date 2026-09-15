@@ -1,0 +1,17 @@
+<resources>
+    <string name="library_german">German</string>
+    <string name="library_english">English</string>
+    <string name="library_empty">No dictionaries yet</string>
+    <string name="library_empty_hint">Create a collection for your next conversation.</string>
+    <string name="library_create">New dictionary</string>
+    <string name="library_name">Dictionary name</string>
+    <string name="library_cancel">Cancel</string>
+    <string name="library_save">Create</string>
+    <string name="library_default">Default</string>
+    <string name="library_make_default">Make %1$s default</string>
+    <string name="library_words">%1$d words</string>
+    <string name="library_play">Play %1$s</string>
+    <string name="library_error">Could not save. Use a unique name of 1–60 characters and try again.</string>
+    <string name="library_details_empty">No words yet</string>
+    <string name="library_load_more">Load more words</string>
+</resources>

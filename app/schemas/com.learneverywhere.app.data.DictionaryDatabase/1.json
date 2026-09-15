@@ -1,0 +1,237 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "5ae7f2323de661f8a45fd30a52dc0378",
+    "entities": [
+      {
+        "tableName": "dictionaries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `language` TEXT NOT NULL, `name` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `nameKey` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "language",
+            "columnName": "language",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameKey",
+            "columnName": "nameKey",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_dictionaries_id_language",
+            "unique": true,
+            "columnNames": [
+              "id",
+              "language"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_dictionaries_id_language` ON `${TABLE_NAME}` (`id`, `language`)"
+          },
+          {
+            "name": "index_dictionaries_language_nameKey",
+            "unique": true,
+            "columnNames": [
+              "language",
+              "nameKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_dictionaries_language_nameKey` ON `${TABLE_NAME}` (`language`, `nameKey`)"
+          }
+        ]
+      },
+      {
+        "tableName": "words",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `dictionaryId` TEXT NOT NULL, `insertionOrder` INTEGER NOT NULL, `draftId` TEXT, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `ukrainian` TEXT NOT NULL, `translation1` TEXT NOT NULL, `translation2` TEXT, `example` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`dictionaryId`) REFERENCES `dictionaries`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dictionaryId",
+            "columnName": "dictionaryId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "insertionOrder",
+            "columnName": "insertionOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "draftId",
+            "columnName": "draftId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content.ukrainian",
+            "columnName": "ukrainian",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content.translation1",
+            "columnName": "translation1",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content.translation2",
+            "columnName": "translation2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "content.example",
+            "columnName": "example",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_words_dictionaryId",
+            "unique": false,
+            "columnNames": [
+              "dictionaryId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_words_dictionaryId` ON `${TABLE_NAME}` (`dictionaryId`)"
+          },
+          {
+            "name": "index_words_draftId",
+            "unique": true,
+            "columnNames": [
+              "draftId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_words_draftId` ON `${TABLE_NAME}` (`draftId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "dictionaries",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "dictionaryId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "language_defaults",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`language` TEXT NOT NULL, `dictionaryId` TEXT NOT NULL, PRIMARY KEY(`language`), FOREIGN KEY(`dictionaryId`, `language`) REFERENCES `dictionaries`(`id`, `language`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "language",
+            "columnName": "language",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dictionaryId",
+            "columnName": "dictionaryId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "language"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_language_defaults_dictionaryId_language",
+            "unique": true,
+            "columnNames": [
+              "dictionaryId",
+              "language"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_language_defaults_dictionaryId_language` ON `${TABLE_NAME}` (`dictionaryId`, `language`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "dictionaries",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "dictionaryId",
+              "language"
+            ],
+            "referencedColumns": [
+              "id",
+              "language"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5ae7f2323de661f8a45fd30a52dc0378')"
+    ]
+  }
+}
