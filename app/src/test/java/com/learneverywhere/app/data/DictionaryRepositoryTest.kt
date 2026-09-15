@@ -109,4 +109,18 @@ class DictionaryRepositoryTest {
         val confirmed = repository.saveWord(Language.DE, original.id, content, "repair", "My German words") as SaveWordResult.Saved
         assertEquals(original.id, confirmed.word.dictionaryId)
     }
+    @Test fun importHonorsFlagOnlyWhenLanguageHasNoExistingDefault() = runBlocking {
+        val imported = repository.importDictionaries(listOf(
+            ImportDictionary(Language.DE, "First", emptyList()),
+            ImportDictionary(Language.DE, "Selected", emptyList(), isDefault = true),
+        ))
+        assertEquals(imported[1].id, repository.getDefault(Language.DE)?.id)
+        repository.importDictionaries(listOf(ImportDictionary(Language.DE, "Later", emptyList(), isDefault = true)))
+        assertEquals(imported[1].id, repository.getDefault(Language.DE)?.id)
+        val english = repository.importDictionaries(listOf(
+            ImportDictionary(Language.EN, "English first", emptyList()),
+            ImportDictionary(Language.EN, "English second", emptyList()),
+        ))
+        assertEquals(english[0].id, repository.getDefault(Language.EN)?.id)
+    }
 }

@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "AGENTS.md",
   "skillDir": "/home/osalnichenko/.agents/skills/autopilot",
   "startedAt": "2026-09-14T20:08:30+02:00",
-  "updatedAt": "2026-09-15T12:47:06+02:00",
+  "updatedAt": "2026-09-15T18:05:22+02:00",
   "finishedAt": null,
   "stages": [
     {
@@ -50,7 +50,7 @@ window.STATE =
       "id": "build",
       "status": "active",
       "startedAt": "2026-09-15T07:54:25+02:00",
-      "note": "Wave 1 готова; Wave 2 — tickets 02/03 після коміту"
+      "note": "Wave 2: 02 Library/JSON і 03 Intake/Gemini паралельно"
     },
     {
       "id": "review",
@@ -135,11 +135,13 @@ window.STATE =
         "app/src/main/java/com/learneverywhere/app/transfer",
         "app/src/main/res/values/strings_library.xml"
       ],
-      "status": "pending",
+      "status": "in-progress",
       "retries": 0,
       "repairs": 0,
       "handoffs": 0,
-      "file": "02-library-json.md"
+      "file": "02-library-json.md",
+      "startedAt": "2026-09-15T12:49:06+02:00",
+      "executor": "/root/t02_library_json"
     },
     {
       "id": "03",
@@ -169,11 +171,13 @@ window.STATE =
         "app/src/main/res/values/strings_home.xml",
         "app/src/test/java/com/learneverywhere/app/intake"
       ],
-      "status": "pending",
+      "status": "in-progress",
       "retries": 0,
       "repairs": 0,
       "handoffs": 0,
-      "file": "03-intake-gemini.md"
+      "file": "03-intake-gemini.md",
+      "startedAt": "2026-09-15T12:49:06+02:00",
+      "executor": "/root/t03_intake_gemini"
     },
     {
       "id": "04",
@@ -346,6 +350,11 @@ window.STATE =
     {
       "quote": "продовжуй Wave 2",
       "effect": "Complete Waves 1 and 2, then stop before Wave 3"
+    },
+    {
+      "quote": "го",
+      "effect": "Resume Wave 2 after temporary subagent usage limit",
+      "at": "2026-09-15T17:57:39+02:00"
     }
   ],
   "coverage": {
@@ -439,5 +448,21 @@ window.STATE =
       ],
       "tests": "assembleDebug, testDebugUnitTest (6 passed), assembleDebugAndroidTest; no attached device for instrumentation"
     }
+  },
+  "wave1Commit": "3224f03",
+  "wave1PushedAt": "2026-09-15T12:49:06+02:00",
+  "wave2SharedSeam": {
+    "owner": "/root/t01_foundation",
+    "status": "done",
+    "items": [
+      "RECORD_AUDIO + queries",
+      "App Check debug/release bootstrap",
+      "ImportDictionary.isDefault atomic default handling"
+    ],
+    "resumedAt": "2026-09-15T17:57:39+02:00",
+    "finishedAt": "2026-09-15T18:05:22+02:00",
+    "reviewer": "/root/w2_seam_review",
+    "review": "passed",
+    "tests": "assembleDebug, assembleRelease, seven repository tests passed; live Firebase unconfigured"
   }
 }

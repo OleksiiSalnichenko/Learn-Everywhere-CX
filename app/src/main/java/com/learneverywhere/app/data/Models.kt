@@ -32,7 +32,7 @@ data class WordEntry(
 data class LanguageDefault(@PrimaryKey val language: Language, val dictionaryId: String)
 
 data class DictionarySummary(@Embedded val dictionary: Dictionary, val wordCount: Int, val isDefault: Boolean)
-data class ImportDictionary(val language: Language, val name: String, val words: List<WordContent>)
+data class ImportDictionary(val language: Language, val name: String, val words: List<WordContent>, val isDefault: Boolean = false)
 
 sealed interface SaveWordResult {
     data class Saved(val word: WordEntry) : SaveWordResult

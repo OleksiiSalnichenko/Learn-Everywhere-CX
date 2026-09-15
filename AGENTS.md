@@ -22,4 +22,5 @@ Android-застосунок для вивчення німецьких та а�
 - `DictionaryRepository.saveWord(language, expectedDictionaryId, content, draftId, automaticDictionaryName)` приймає назву автоматичного словника, локалізовану в UI. Якщо словники є, але дефолт відсутній, repository відновлює дефолт і вимагає повторного підтвердження призначення.
 - `AppContainer.mainLanguage` є `StateFlow<Language?>`; `None` ставить German вкладку бібліотеки першою. Постійні налаштування належать Wave 3.
 - Новий Firebase-проєкт `learn-everywhere` на Spark створено, але AI Logic у консолі поки не дозволяє налаштування; `app/google-services.json` і debug токени не комітити. Для Gemini обрано 3.5 Flash-Lite, бо 2.5 вимикають у жовтні 2026.
+- Wave 2 shared seam: `ImportDictionary.isDefault` зберігається атомарно; за наявності чинного дефолту він лишається, інакше обирається позначений імпортом або перший. Firebase App Check ініціалізується при старті лише за наявності конфігурації: debug провайдер окремий від release Play Integrity. Manifest містить RECORD_AUDIO і query RecognitionService.
 <!-- autopilot:end -->

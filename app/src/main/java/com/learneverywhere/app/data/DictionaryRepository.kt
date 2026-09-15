@@ -106,10 +106,20 @@ class RoomDictionaryRepository(private val database: DictionaryDatabase) : Dicti
         }
     }
     override suspend fun importDictionaries(items: List<ImportDictionary>): List<Dictionary> = database.withTransaction {
-        items.map { item ->
+        val previousDefaults = items.map { it.language }.distinct().associateWith { dao.defaultDictionary(it) }
+        val imported = items.map { item ->
             val dictionary = create(item.language, item.name)
             item.words.forEach { insertWord(dictionary.id, validContent(it)) }
             dictionary
         }
+        // A file's selection applies only when it cannot replace the user's existing default.
+        previousDefaults.forEach { (language, previous) ->
+            if (previous == null) {
+                val candidates = items.indices.filter { items[it].language == language }
+                val selectedIndex = candidates.firstOrNull { items[it].isDefault } ?: candidates.first()
+                dao.selectDefault(LanguageDefault(language, imported[selectedIndex].id))
+            }
+        }
+        imported
     }
 }
