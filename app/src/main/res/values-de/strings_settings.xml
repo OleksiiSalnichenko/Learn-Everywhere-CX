@@ -1,0 +1,30 @@
+<resources>
+    <string name="settings_general">Allgemein</string>
+    <string name="settings_playback">Wiedergabe</string>
+    <string name="settings_main_language">Hauptlernsprache</string>
+    <string name="settings_interface_language">Sprache der Benutzeroberfläche</string>
+    <string name="settings_theme">Design</string>
+    <string name="settings_none">Keine</string>
+    <string name="settings_german">Deutsch</string>
+    <string name="settings_english">Englisch</string>
+    <string name="settings_ukrainian">Ukrainisch</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Hell</string>
+    <string name="settings_theme_dark">Dunkel</string>
+    <string name="settings_loop">Lektion wiederholen</string>
+    <string name="settings_shuffle">Wörter mischen</string>
+    <string name="settings_ukrainian_repeats">Wiederholungen des ukrainischen Worts</string>
+    <string name="settings_ukrainian_repeat_pause">Pause zwischen ukrainischen Wiederholungen</string>
+    <string name="settings_before_translation">Pause vor der Übersetzung</string>
+    <string name="settings_translation_repeats">Wiederholungen des Übersetzungszyklus</string>
+    <string name="settings_translation_repeat_pause">Pause zwischen Übersetzungen</string>
+    <string name="settings_before_example">Pause vor dem Beispiel</string>
+    <string name="settings_after_word">Pause nach dem Wort</string>
+    <string name="settings_include_example">Beispielsatz vorlesen</string>
+    <string name="settings_show_card">Wortkarte anzeigen</string>
+    <string name="settings_seconds">%1$d Sekunden</string>
+    <string name="settings_times">%1$d-mal</string>
+    <string name="settings_next_session_hint">Audioänderungen gelten ab der nächsten Lektion. Karte und Design ändern sich sofort.</string>
+    <string name="settings_cancel">Abbrechen</string>
+    <string name="settings_save_error">Einstellungen konnten nicht gespeichert werden. Versuche es erneut.</string>
+</resources>

@@ -1,0 +1,30 @@
+<resources>
+    <string name="settings_general">Загальні</string>
+    <string name="settings_playback">Відтворення</string>
+    <string name="settings_main_language">Головна мова навчання</string>
+    <string name="settings_interface_language">Мова інтерфейсу</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_none">Ніяка</string>
+    <string name="settings_german">Німецька</string>
+    <string name="settings_english">Англійська</string>
+    <string name="settings_ukrainian">Українська</string>
+    <string name="settings_theme_system">Системна</string>
+    <string name="settings_theme_light">Світла</string>
+    <string name="settings_theme_dark">Темна</string>
+    <string name="settings_loop">Зациклювати урок</string>
+    <string name="settings_shuffle">Перемішувати слова</string>
+    <string name="settings_ukrainian_repeats">Повтори українського слова</string>
+    <string name="settings_ukrainian_repeat_pause">Пауза між повторами українською</string>
+    <string name="settings_before_translation">Пауза перед перекладом</string>
+    <string name="settings_translation_repeats">Повтори циклу перекладів</string>
+    <string name="settings_translation_repeat_pause">Пауза між перекладами</string>
+    <string name="settings_before_example">Пауза перед прикладом</string>
+    <string name="settings_after_word">Пауза після слова</string>
+    <string name="settings_include_example">Озвучувати речення-приклад</string>
+    <string name="settings_show_card">Показувати картку слова</string>
+    <string name="settings_seconds">%1$d с</string>
+    <string name="settings_times">%1$d разів</string>
+    <string name="settings_next_session_hint">Зміни аудіо застосуються з наступного запуску уроку. Картка й тема змінюються одразу.</string>
+    <string name="settings_cancel">Скасувати</string>
+    <string name="settings_save_error">Не вдалося зберегти налаштування. Повторіть спробу.</string>
+</resources>

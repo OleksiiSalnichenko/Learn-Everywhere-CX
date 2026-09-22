@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Learn Everywhere</string>
+    <string name="nav_home">Start</string>
+    <string name="nav_library">Wörterbücher</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="nav_back">Zurück</string>
+    <string name="shell_home">Deine Wörter sind immer dabei.</string>
+    <string name="shell_translation">Die Übersetzung ist nach der Einrichtung verfügbar.</string>
+    <string name="shell_settings">Einstellungen</string>
+    <string name="shell_playback">Die Audiowiedergabe ist in der nächsten Version verfügbar.</string>
+</resources>

@@ -1,5 +1,5 @@
 <resources>
     <color name="splash_background">#F7F5EF</color>
-    <style name="Theme.LearnEverywhere" parent="android:style/Theme.Material.Light.NoActionBar"><item name="android:fontFamily">sans</item><item name="android:windowLightStatusBar">true</item><item name="android:windowLightNavigationBar">true</item><item name="android:windowBackground">@color/splash_background</item></style>
+    <style name="Theme.LearnEverywhere" parent="Theme.AppCompat.Light.NoActionBar"><item name="android:fontFamily">sans</item><item name="android:windowLightStatusBar">true</item><item name="android:windowLightNavigationBar">true</item><item name="android:windowBackground">@color/splash_background</item></style>
     <style name="Theme.LearnEverywhere.Starting" parent="Theme.SplashScreen"><item name="windowSplashScreenBackground">@color/splash_background</item><item name="windowSplashScreenAnimatedIcon">@drawable/ic_book_sound</item><item name="postSplashScreenTheme">@style/Theme.LearnEverywhere</item></style>
 </resources>

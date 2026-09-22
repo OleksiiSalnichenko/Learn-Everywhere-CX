@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "AGENTS.md",
   "skillDir": "/home/osalnichenko/.agents/skills/autopilot",
   "startedAt": "2026-09-14T20:08:30+02:00",
-  "updatedAt": "2026-09-22T10:57:39+02:00",
+  "updatedAt": "2026-09-22T11:33:12+02:00",
   "finishedAt": null,
   "stages": [
     {
@@ -48,13 +48,15 @@ window.STATE =
     },
     {
       "id": "build",
-      "status": "paused",
+      "status": "in-progress",
       "startedAt": "2026-09-15T07:54:25+02:00",
-      "note": "Wave 2 завершена; пауза перед Wave 3 за вказівкою користувача"
+      "note": "Wave 3: налаштування, локалізація та план уроку"
     },
     {
       "id": "review",
-      "status": "pending"
+      "status": "in-progress",
+      "startedAt": "2026-09-22T11:28:16+02:00",
+      "note": "Рев’ю таску 04 за Manifest/Spec і Craft"
     },
     {
       "id": "final",
@@ -218,11 +220,12 @@ window.STATE =
         "app/src/main/java/com/learneverywhere/app/playback/plan",
         "app/src/main/res"
       ],
-      "status": "pending",
+      "status": "review",
       "retries": 0,
-      "repairs": 0,
+      "repairs": 1,
       "handoffs": 0,
-      "file": "04-settings-plan.md"
+      "file": "04-settings-plan.md",
+      "startedAt": "2026-09-22T11:07:01+02:00"
     },
     {
       "id": "05",
@@ -455,6 +458,30 @@ window.STATE =
       "axis": "craft",
       "file": "HomeStateTest.kt:8-15",
       "finding": "Retry policy tests cover only two of six error categories"
+    },
+    {
+      "ticket": "04",
+      "axis": "spec",
+      "file": "SettingsScreen.kt:60-62",
+      "finding": "Choice dialog options should remain reachable at large font scale by scrolling"
+    },
+    {
+      "ticket": "04",
+      "axis": "craft",
+      "file": "SettingsRepositoryTest.kt:20-25",
+      "finding": "Defaults test should assert independent literal values instead of AppSettings production defaults"
+    },
+    {
+      "ticket": "04",
+      "axis": "craft",
+      "file": "SettingsRepositoryTest.kt:20-49",
+      "finding": "Repository tests do not cover SaveSettingsResult.Failure or coroutine cancellation propagation"
+    },
+    {
+      "ticket": "04",
+      "axis": "craft",
+      "file": "PlaybackPlanTest.kt:50-58",
+      "finding": "Shuffle permutation test should assert count or multiset, not only unique IDs"
     }
   ],
   "reviewers": {
@@ -471,11 +498,11 @@ window.STATE =
     "observedScreens": "28 актуальних макетів, включно з останніми 12 Detail/Edit/Playback; 4 початкові чернетки додатково."
   },
   "pause": {
-    "requestedByUser": true,
+    "requestedByUser": false,
     "at": "2026-09-22T10:55:00+02:00",
     "reason": "Wave 2 завершена; користувач наказав зупинитися перед Wave 3",
     "resumeRequires": "Повідомлення користувача про продовження",
-    "resumedAt": null
+    "resumedAt": "2026-09-22T11:07:01+02:00"
   },
   "designApproval": {
     "status": "approved",
@@ -505,7 +532,7 @@ window.STATE =
     "model": "gemini-3.5-flash-lite",
     "modelReason": "2.5 Flash-Lite shutdown October 2026; 3.5 Flash-Lite Standard free tier supported without billing as of 2026-09-15"
   },
-  "stopAfterWave": 2,
+  "stopAfterWave": null,
   "firebase": {
     "projectId": "learn-everywhere",
     "plan": "Spark",

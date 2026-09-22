@@ -1,0 +1,30 @@
+<resources>
+    <string name="settings_general">General</string>
+    <string name="settings_playback">Playback</string>
+    <string name="settings_main_language">Main learning language</string>
+    <string name="settings_interface_language">Interface language</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_none">None</string>
+    <string name="settings_german">German</string>
+    <string name="settings_english">English</string>
+    <string name="settings_ukrainian">Ukrainian</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_loop">Loop the lesson</string>
+    <string name="settings_shuffle">Shuffle words</string>
+    <string name="settings_ukrainian_repeats">Ukrainian word repeats</string>
+    <string name="settings_ukrainian_repeat_pause">Pause between Ukrainian repeats</string>
+    <string name="settings_before_translation">Pause before translation</string>
+    <string name="settings_translation_repeats">Translation cycle repeats</string>
+    <string name="settings_translation_repeat_pause">Pause between translations</string>
+    <string name="settings_before_example">Pause before example</string>
+    <string name="settings_after_word">Pause after word</string>
+    <string name="settings_include_example">Speak example sentence</string>
+    <string name="settings_show_card">Show word card</string>
+    <string name="settings_seconds">%1$d seconds</string>
+    <string name="settings_times">%1$d times</string>
+    <string name="settings_next_session_hint">Audio changes apply when you start the next lesson. Card and theme changes apply now.</string>
+    <string name="settings_cancel">Cancel</string>
+    <string name="settings_save_error">Could not save settings. Try again.</string>
+</resources>
