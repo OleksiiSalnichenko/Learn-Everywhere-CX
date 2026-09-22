@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "AGENTS.md",
   "skillDir": "/home/osalnichenko/.agents/skills/autopilot",
   "startedAt": "2026-09-14T20:08:30+02:00",
-  "updatedAt": "2026-09-22T10:49:47+02:00",
+  "updatedAt": "2026-09-22T10:55:00+02:00",
   "finishedAt": null,
   "stages": [
     {
@@ -48,9 +48,9 @@ window.STATE =
     },
     {
       "id": "build",
-      "status": "active",
+      "status": "paused",
       "startedAt": "2026-09-15T07:54:25+02:00",
-      "note": "2 з 3 тасків готові; 03 Intake/Gemini на незалежному рев’ю"
+      "note": "Wave 2 завершена; пауза перед Wave 3 за вказівкою користувача"
     },
     {
       "id": "review",
@@ -63,8 +63,8 @@ window.STATE =
   ],
   "requirements": {
     "total": 65,
-    "done": 28,
-    "inTicket": 37,
+    "done": 40,
+    "inTicket": 25,
     "inSpec": 0,
     "placeholder": 0,
     "deferred": 0,
@@ -144,7 +144,7 @@ window.STATE =
       "executor": "/root/w2_library_repair",
       "finishedAt": "2026-09-22T10:49:47+02:00",
       "tests": "Full build green: debug/release APK, unit tests, AndroidTest APK; 7 targeted Ticket02 tests passed",
-      "commit": "pending"
+      "commit": "0193116"
     },
     {
       "id": "03",
@@ -174,13 +174,16 @@ window.STATE =
         "app/src/main/res/values/strings_home.xml",
         "app/src/test/java/com/learneverywhere/app/intake"
       ],
-      "status": "review",
+      "status": "done",
       "retries": 0,
       "repairs": 1,
       "handoffs": 0,
       "file": "03-intake-gemini.md",
       "startedAt": "2026-09-15T12:49:06+02:00",
-      "executor": "/root/w2_intake_repair"
+      "executor": "/root/w2_intake_repair",
+      "finishedAt": "2026-09-22T10:55:00+02:00",
+      "tests": "Full build green: debug/release APK, unit tests, AndroidTest APK; 15 targeted Ticket03 tests passed",
+      "commit": "pending"
     },
     {
       "id": "04",
@@ -404,6 +407,54 @@ window.STATE =
       "axis": "craft",
       "file": "DictionaryTransferTest.kt:14-50",
       "finding": "Some negative tests assert location/type rather than the exact TransferProblem"
+    },
+    {
+      "ticket": "03",
+      "axis": "spec",
+      "file": "HomeScreen.kt:238",
+      "finding": "Preview should display destination language together with dictionary name"
+    },
+    {
+      "ticket": "03",
+      "axis": "spec",
+      "file": "HomeScreen.kt:83-84,239",
+      "finding": "Duplicate preview warns but does not show the existing record"
+    },
+    {
+      "ticket": "03",
+      "axis": "spec",
+      "file": "TranslationProvider.kt:23-24",
+      "finding": "Unsupported-language input has no distinct explanatory state"
+    },
+    {
+      "ticket": "03",
+      "axis": "spec",
+      "file": "GeminiTranslationProvider.kt:43",
+      "finding": "Example contract does not explicitly ensure use of the first meaning"
+    },
+    {
+      "ticket": "03",
+      "axis": "craft",
+      "file": "HomeScreen.kt:130-196",
+      "finding": "Speech callbacks are not scoped to a session and control calls need runtime-error guards"
+    },
+    {
+      "ticket": "03",
+      "axis": "craft",
+      "file": "GeminiTranslationProvider.kt:53-60",
+      "finding": "Firebase error classification depends on exception message text"
+    },
+    {
+      "ticket": "03",
+      "axis": "craft",
+      "file": "GeminiTranslationProviderTest.kt:9-25",
+      "finding": "Positive parser test should assert every mapped field"
+    },
+    {
+      "ticket": "03",
+      "axis": "craft",
+      "file": "HomeStateTest.kt:8-15",
+      "finding": "Retry policy tests cover only two of six error categories"
     }
   ],
   "reviewers": {
@@ -420,11 +471,11 @@ window.STATE =
     "observedScreens": "28 актуальних макетів, включно з останніми 12 Detail/Edit/Playback; 4 початкові чернетки додатково."
   },
   "pause": {
-    "requestedByUser": false,
-    "at": "2026-09-15T07:17:46+02:00",
-    "reason": "Пауза після опрацювання брифу; чернетка готова, питання перекладу ще відкрите",
+    "requestedByUser": true,
+    "at": "2026-09-22T10:55:00+02:00",
+    "reason": "Wave 2 завершена; користувач наказав зупинитися перед Wave 3",
     "resumeRequires": "Повідомлення користувача про продовження",
-    "resumedAt": "2026-09-15T07:37:51+02:00"
+    "resumedAt": null
   },
   "designApproval": {
     "status": "approved",
@@ -498,6 +549,22 @@ window.STATE =
         "repeated import conflict coverage"
       ],
       "tests": "Full debug/release/unit/AndroidTest APK build passed; 7 targeted tests passed; device SAF unverified"
+    },
+    "03": {
+      "manifestSpecReviewer": "/root/w2_library_review",
+      "manifestSpecVerdict": "manifest-clean; nonblocking-spec-findings-recorded",
+      "craftReviewer": "/root/w2_craft_review",
+      "craftVerdict": "nonblocking-findings-recorded",
+      "repairItems": [
+        "effective Ukrainian translation target",
+        "source-candidate contradiction chooser",
+        "repository failure recovery and UI finally",
+        "strict Gemini JSON types",
+        "rotation-safe review warnings",
+        "speech terminal state and listening wave",
+        "retry policy split"
+      ],
+      "tests": "Full debug/release/unit/AndroidTest APK build passed; 15 targeted tests passed; live Gemini and device speech unverified"
     }
   },
   "wave1Commit": "3224f03",

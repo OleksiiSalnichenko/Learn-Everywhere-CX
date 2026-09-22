@@ -3,7 +3,7 @@
 
 Android-застосунок для вивчення німецьких та англійських слів через український переклад і аудіосписки.
 
-Стек за брифом: Kotlin, Jetpack Compose, Room. Wave 1 реалізована: Android-основа, локальні словники і 6 Room unit-тестів. Home/Settings і аудіо ще розвиваються у наступних хвилях.
+Стек за брифом: Kotlin, Jetpack Compose, Room. Waves 1–2 реалізовані: Android-основа, локальні словники, Library/JSON transfer і Home intake через Firebase AI Logic. Settings і фонове аудіо належать наступним хвилям.
 
 ## Обмеження користувача
 
@@ -24,4 +24,5 @@ Android-застосунок для вивчення німецьких та а�
 - Новий Firebase-проєкт `learn-everywhere` на Spark та Android app `com.learneverywhere.app` зареєстровано. У консолі AI Logic відкрито wizard, але кнопка Enable APIs означає прийняття Gemini API Additional Terms та usage policies; чекаємо явного схвалення користувача. Новий `app/google-services.json` ще не збережено в workspace; старий файл іншого проєкту відкинуто. Config і debug токени не комітити. Для Gemini обрано 3.5 Flash-Lite, бо 2.5 вимикають у жовтні 2026.
 - Wave 2 shared seam: `ImportDictionary.isDefault` зберігається атомарно; за наявності чинного дефолту він лишається, інакше обирається позначений імпортом або перший. Firebase App Check ініціалізується при старті лише за наявності конфігурації: debug провайдер окремий від release Play Integrity. Manifest містить RECORD_AUDIO і query RecognitionService.
 - Для JSON-експорту `DictionaryRepository.getTransferSnapshot(ids: List<String>? = null)` повертає словники, повні впорядковані слова й прапор дефолту в одній Room read-транзакції. `null` означає всі словники; невідомий ID — явна помилка.
+- Wave 2 перевірена командами `:app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:assembleDebugAndroidTest`; 7 цільових transfer/store тестів і 15 intake/provider/state тестів зелені. SAF picker, голосовий ввід і живий Gemini-запит ще потребують Android-пристрою та завершеної Firebase-конфігурації.
 <!-- autopilot:end -->
