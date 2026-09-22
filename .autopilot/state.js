@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "AGENTS.md",
   "skillDir": "/home/osalnichenko/.agents/skills/autopilot",
   "startedAt": "2026-09-14T20:08:30+02:00",
-  "updatedAt": "2026-09-15T23:21:27+02:00",
+  "updatedAt": "2026-09-22T10:49:47+02:00",
   "finishedAt": null,
   "stages": [
     {
@@ -50,7 +50,7 @@ window.STATE =
       "id": "build",
       "status": "active",
       "startedAt": "2026-09-15T07:54:25+02:00",
-      "note": "Wave 2: 02 Library/JSON і 03 Intake/Gemini паралельно"
+      "note": "2 з 3 тасків готові; 03 Intake/Gemini на незалежному рев’ю"
     },
     {
       "id": "review",
@@ -63,8 +63,8 @@ window.STATE =
   ],
   "requirements": {
     "total": 65,
-    "done": 21,
-    "inTicket": 44,
+    "done": 28,
+    "inTicket": 37,
     "inSpec": 0,
     "placeholder": 0,
     "deferred": 0,
@@ -135,13 +135,16 @@ window.STATE =
         "app/src/main/java/com/learneverywhere/app/transfer",
         "app/src/main/res/values/strings_library.xml"
       ],
-      "status": "in-progress",
+      "status": "done",
       "retries": 0,
-      "repairs": 0,
+      "repairs": 1,
       "handoffs": 0,
       "file": "02-library-json.md",
       "startedAt": "2026-09-15T12:49:06+02:00",
-      "executor": "/root/t02_library_json"
+      "executor": "/root/w2_library_repair",
+      "finishedAt": "2026-09-22T10:49:47+02:00",
+      "tests": "Full build green: debug/release APK, unit tests, AndroidTest APK; 7 targeted Ticket02 tests passed",
+      "commit": "pending"
     },
     {
       "id": "03",
@@ -171,13 +174,13 @@ window.STATE =
         "app/src/main/res/values/strings_home.xml",
         "app/src/test/java/com/learneverywhere/app/intake"
       ],
-      "status": "in-progress",
+      "status": "review",
       "retries": 0,
-      "repairs": 0,
+      "repairs": 1,
       "handoffs": 0,
       "file": "03-intake-gemini.md",
       "startedAt": "2026-09-15T12:49:06+02:00",
-      "executor": "/root/t03_intake_gemini"
+      "executor": "/root/w2_intake_repair"
     },
     {
       "id": "04",
@@ -360,6 +363,11 @@ window.STATE =
       "quote": "го",
       "effect": "Resume Wave 2 again after subagent usage reset",
       "at": "2026-09-15T23:13:08+02:00"
+    },
+    {
+      "quote": "продовжуй",
+      "effect": "Resume Wave 2 repairs after session interruption",
+      "at": "2026-09-22T10:41:45+02:00"
     }
   ],
   "coverage": {
@@ -378,10 +386,29 @@ window.STATE =
     ],
     "finalResult": "Independent G2 PASS; 2 findings resolved"
   },
-  "concerns": [],
+  "concerns": [
+    {
+      "ticket": "02",
+      "axis": "craft",
+      "file": "LibraryScreen.kt:146-165",
+      "finding": "Default card remains visible in detail state; keep it list-only"
+    },
+    {
+      "ticket": "02",
+      "axis": "craft",
+      "file": "PendingExportStore.kt:8-28",
+      "finding": "Abandoned SAF pending files have no expiry cleanup"
+    },
+    {
+      "ticket": "02",
+      "axis": "craft",
+      "file": "DictionaryTransferTest.kt:14-50",
+      "finding": "Some negative tests assert location/type rather than the exact TransferProblem"
+    }
+  ],
   "reviewers": {
-    "manifestSpec": "/root/spec_coverage",
-    "craft": null
+    "manifestSpec": "/root/w2_library_review",
+    "craft": "/root/w2_craft_review"
   },
   "blind": null,
   "stitch": {
@@ -456,6 +483,21 @@ window.STATE =
         "honest playback shell"
       ],
       "tests": "assembleDebug, testDebugUnitTest (6 passed), assembleDebugAndroidTest; no attached device for instrumentation"
+    },
+    "02": {
+      "manifestSpecReviewer": "/root/w2_library_review",
+      "manifestSpecVerdict": "clean-after-repair",
+      "craftReviewer": "/root/w2_craft_review",
+      "craftVerdict": "nonblocking-findings-recorded",
+      "repairItems": [
+        "off-main JSON export",
+        "rotation-safe pending SAF payload",
+        "clickable non-duplicated default dictionary",
+        "localized import suffix",
+        "accessible selected semantics",
+        "repeated import conflict coverage"
+      ],
+      "tests": "Full debug/release/unit/AndroidTest APK build passed; 7 targeted tests passed; device SAF unverified"
     }
   },
   "wave1Commit": "3224f03",
