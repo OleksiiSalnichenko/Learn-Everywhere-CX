@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "AGENTS.md",
   "skillDir": "/home/osalnichenko/.agents/skills/autopilot",
   "startedAt": "2026-09-14T20:08:30+02:00",
-  "updatedAt": "2026-09-22T11:33:12+02:00",
+  "updatedAt": "2026-09-23T00:36:13+02:00",
   "finishedAt": null,
   "stages": [
     {
@@ -50,13 +50,13 @@ window.STATE =
       "id": "build",
       "status": "in-progress",
       "startedAt": "2026-09-15T07:54:25+02:00",
-      "note": "Wave 3: налаштування, локалізація та план уроку"
+      "note": "Wave 4: фоновий аудіоплеєр"
     },
     {
       "id": "review",
       "status": "in-progress",
       "startedAt": "2026-09-22T11:28:16+02:00",
-      "note": "Рев’ю таску 04 за Manifest/Spec і Craft"
+      "note": "Рев’ю таску 05 за Manifest/Spec і Craft"
     },
     {
       "id": "final",
@@ -65,8 +65,8 @@ window.STATE =
   ],
   "requirements": {
     "total": 65,
-    "done": 40,
-    "inTicket": 25,
+    "done": 56,
+    "inTicket": 9,
     "inSpec": 0,
     "placeholder": 0,
     "deferred": 0,
@@ -220,12 +220,16 @@ window.STATE =
         "app/src/main/java/com/learneverywhere/app/playback/plan",
         "app/src/main/res"
       ],
-      "status": "review",
+      "status": "done",
       "retries": 0,
       "repairs": 1,
       "handoffs": 0,
       "file": "04-settings-plan.md",
-      "startedAt": "2026-09-22T11:07:01+02:00"
+      "startedAt": "2026-09-22T11:07:01+02:00",
+      "executor": "/root/w3_settings_plan",
+      "finishedAt": "2026-09-22T11:41:13+02:00",
+      "tests": "Full build green: debug/release APK, 37 unit tests, AndroidTest APK; 7 Ticket04 tests passed",
+      "commit": "f7850bb"
     },
     {
       "id": "05",
@@ -246,11 +250,13 @@ window.STATE =
         "app/src/main/java/com/learneverywhere/app/ui/player",
         "app/src/main/AndroidManifest.xml"
       ],
-      "status": "pending",
-      "retries": 0,
-      "repairs": 0,
+      "status": "repair",
+      "retries": 1,
+      "repairs": 2,
       "handoffs": 0,
-      "file": "05-playback.md"
+      "file": "05-playback.md",
+      "startedAt": "2026-09-22T11:42:53+02:00",
+      "executor": "/root/w4_playback_resume"
     },
     {
       "id": "06",
@@ -482,7 +488,21 @@ window.STATE =
       "axis": "craft",
       "file": "PlaybackPlanTest.kt:50-58",
       "finding": "Shuffle permutation test should assert count or multiset, not only unique IDs"
-    }
+    },
+    {"ticket":"05","axis":"spec","file":"PlaybackService.kt:94","finding":"STATE_ENDED can finish while bounded prefetch is still preparing later events"},
+    {"ticket":"05","axis":"spec","file":"PlaybackService.kt:99","finding":"Direct MediaSession transport can bypass audio-focus and stop lifecycle handlers"},
+    {"ticket":"05","axis":"spec","file":"AudioPreparer.kt:37","finding":"Prepared in-flight batch files need protection before enqueue"},
+    {"ticket":"05","axis":"spec","file":"PlaybackService.kt:182","finding":"Live phase must come from typed event semantics instead of text equality"},
+    {"ticket":"05","axis":"craft","file":"PlaybackQueueTest.kt:18","finding":"Failed-synthesis test needs a post-failure sentinel and explicit returned-problem assertion"},
+    {"ticket":"05","axis":"craft","file":"AudioPreparer.kt:96","finding":"Cancellation or thrown synth calls must clean callbacks and temporary files in finally"},
+    {"ticket":"05","axis":"craft","file":"AudioPreparer.kt:105","finding":"Every prepared batch file must stay protected until player ownership"},
+    {"ticket":"05","axis":"craft","file":"PlaybackService.kt:157","finding":"Consumed items should be removed so long sessions do not pin the full cache"},
+    {"ticket":"05","axis":"craft","file":"PlaybackService.kt:89","finding":"All play/pause transitions need one complete audio-focus policy"},
+    {"ticket":"05","axis":"craft","file":"PlaybackService.kt:126","finding":"All preparation exits must publish actionable state and settle foreground ownership"},
+    {"ticket":"05","axis":"craft","file":"PlaybackService.kt:183","finding":"Prepared segments need explicit phase identity"},
+    {"ticket":"05","axis":"craft","file":"MainActivity.kt:97","finding":"Player card visibility must consistently use session snapshot or explicitly update service state"},
+    {"ticket":"05","axis":"craft","file":"PlaybackController.kt:35","finding":"Controller connections need timeout, cancellation and surfaced failure"},
+    {"ticket":"05","axis":"device","file":"Android runtime","finding":"Screen-off playback, live TTS voices and notification/lockscreen sync require a connected device"}
   ],
   "reviewers": {
     "manifestSpec": "/root/w2_library_review",
@@ -592,6 +612,19 @@ window.STATE =
         "retry policy split"
       ],
       "tests": "Full debug/release/unit/AndroidTest APK build passed; 15 targeted tests passed; live Gemini and device speech unverified"
+    },
+    "04": {
+      "manifestSpecReviewer": "/root/w2_library_review",
+      "manifestSpecVerdict": "passed-after-repair; nonblocking large-font dialog finding recorded",
+      "craftReviewer": "/root/w2_craft_review",
+      "craftVerdict": "nonblocking-findings-recorded",
+      "repairItems": [
+        "atomic settings transforms from latest DataStore snapshot",
+        "concurrent update and recreation regression test"
+      ],
+      "tests": "Full debug/release/unit/AndroidTest APK build passed; 37 unit tests total, 7 Ticket04 tests passed; device locale/large-font smoke unverified",
+      "commit": "f7850bb",
+      "pushedAt": "2026-09-22T11:42:53+02:00"
     }
   },
   "wave1Commit": "3224f03",

@@ -1,0 +1,20 @@
+<resources>
+    <string name="playback_channel">Audiolektionen</string>
+    <string name="playback_preparing">Audio wird vorbereitet…</string>
+    <string name="playback_progress">%1$d von %2$d</string>
+    <string name="playback_phase_ukrainian">Ukrainisch</string>
+    <string name="playback_phase_translation">Übersetzung</string>
+    <string name="playback_phase_example">Beispiel</string>
+    <string name="playback_phase_pause">Pause</string>
+    <string name="playback_pause">Wiedergabe pausieren</string>
+    <string name="playback_resume">Wiedergabe fortsetzen</string>
+    <string name="playback_stop">Wiedergabe stoppen</string>
+    <string name="playback_retry">Erneut versuchen</string>
+    <string name="playback_error_title">Audio konnte nicht gestartet werden</string>
+    <string name="playback_error_empty">Dieses Wörterbuch enthält noch keine Wörter.</string>
+    <string name="playback_error_default">Lege dieses Wörterbuch als Standard fest und versuche es erneut.</string>
+    <string name="playback_error_voice">Installiere ukrainische, deutsche und englische Sprachausgaben in den Geräteeinstellungen und versuche es erneut.</string>
+    <string name="playback_error_synthesis">Das Telefon konnte das Audio nicht vorbereiten. Versuche es erneut.</string>
+    <string name="playback_error_storage">Zum Vorbereiten des Audios ist nicht genügend Speicherplatz verfügbar.</string>
+    <string name="playback_error_missing">Dieses Wörterbuch ist nicht mehr vorhanden.</string>
+</resources>

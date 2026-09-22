@@ -1,0 +1,20 @@
+<resources>
+    <string name="playback_channel">Audio lessons</string>
+    <string name="playback_preparing">Preparing audio…</string>
+    <string name="playback_progress">%1$d of %2$d</string>
+    <string name="playback_phase_ukrainian">Ukrainian</string>
+    <string name="playback_phase_translation">Translation</string>
+    <string name="playback_phase_example">Example</string>
+    <string name="playback_phase_pause">Pause</string>
+    <string name="playback_pause">Pause playback</string>
+    <string name="playback_resume">Resume playback</string>
+    <string name="playback_stop">Stop playback</string>
+    <string name="playback_retry">Try again</string>
+    <string name="playback_error_title">Audio could not start</string>
+    <string name="playback_error_empty">This dictionary has no words yet.</string>
+    <string name="playback_error_default">Choose this dictionary as the default, then try again.</string>
+    <string name="playback_error_voice">Install Ukrainian, German and English text-to-speech voices in device settings, then try again.</string>
+    <string name="playback_error_synthesis">The phone could not prepare the audio. Try again.</string>
+    <string name="playback_error_storage">There is not enough available storage to prepare the audio.</string>
+    <string name="playback_error_missing">This dictionary no longer exists.</string>
+</resources>

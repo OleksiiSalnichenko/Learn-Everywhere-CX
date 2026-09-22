@@ -26,6 +26,9 @@ import androidx.core.os.LocaleListCompat
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatActivity
 import com.learneverywhere.app.settings.*
+import com.learneverywhere.app.playback.PlaybackController
+import com.learneverywhere.app.ui.player.PlayerCard
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +72,8 @@ object AppContainer {
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val playbackMessage = stringResource(R.string.shell_playback)
+    val playbackController = remember(context) { PlaybackController(context.applicationContext) }
+    val playbackState by playbackController.observeState().collectAsStateWithLifecycle()
     LaunchedEffect(repository) { repository.repairDefaults() }
     BackHandler(settings || tab != 0) { if (settings) settings = false else tab = 0 }
     Scaffold(topBar = {
@@ -87,7 +91,16 @@ object AppContainer {
                 if (settingsRepository.update(change) is SaveSettingsResult.Failure) snackbar.showSnackbar(context.getString(R.string.settings_save_error))
             } }) { settings = false }
             else if (tab == 0) HomeScreen(repository, appSettings.mainLanguage, automaticDictionaryName = { language -> context.getString(if (language == Language.DE) R.string.automatic_german_dictionary else R.string.automatic_english_dictionary) })
-            else LibraryScreen(repository, mainLanguage = appSettings.mainLanguage, onPlay = { scope.launch { snackbar.showSnackbar(playbackMessage) } })
+            else LibraryScreen(repository, mainLanguage = appSettings.mainLanguage, onPlay = playbackController::play)
+            PlayerCard(
+                state = playbackState,
+                showCard = appSettings.showCard,
+                onPause = playbackController::pause,
+                onResume = playbackController::resume,
+                onStop = playbackController::stop,
+                onRetry = playbackController::retry,
+                modifier = Modifier.align(androidx.compose.ui.Alignment.BottomCenter),
+            )
         }
     }
 }

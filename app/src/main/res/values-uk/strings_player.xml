@@ -1,0 +1,20 @@
+<resources>
+    <string name="playback_channel">Аудіоуроки</string>
+    <string name="playback_preparing">Готуємо аудіо…</string>
+    <string name="playback_progress">%1$d із %2$d</string>
+    <string name="playback_phase_ukrainian">Українське слово</string>
+    <string name="playback_phase_translation">Переклад</string>
+    <string name="playback_phase_example">Приклад</string>
+    <string name="playback_phase_pause">Пауза</string>
+    <string name="playback_pause">Призупинити відтворення</string>
+    <string name="playback_resume">Продовжити відтворення</string>
+    <string name="playback_stop">Зупинити відтворення</string>
+    <string name="playback_retry">Спробувати ще раз</string>
+    <string name="playback_error_title">Не вдалося запустити аудіо</string>
+    <string name="playback_error_empty">У цьому словнику ще немає слів.</string>
+    <string name="playback_error_default">Зробіть цей словник основним і спробуйте ще раз.</string>
+    <string name="playback_error_voice">Встановіть український, німецький та англійський голоси синтезу мовлення в налаштуваннях пристрою і спробуйте ще раз.</string>
+    <string name="playback_error_synthesis">Телефон не зміг підготувати аудіо. Спробуйте ще раз.</string>
+    <string name="playback_error_storage">Недостатньо вільного місця для підготовки аудіо.</string>
+    <string name="playback_error_missing">Цього словника більше немає.</string>
+</resources>
