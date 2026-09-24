@@ -22,8 +22,8 @@
     <string name="settings_after_word">Pause after word</string>
     <string name="settings_include_example">Speak example sentence</string>
     <string name="settings_show_card">Show word card</string>
-    <string name="settings_seconds">%1$d seconds</string>
-    <string name="settings_times">%1$d times</string>
+    <plurals name="settings_seconds"><item quantity="one">%1$d second</item><item quantity="other">%1$d seconds</item></plurals>
+    <plurals name="settings_times"><item quantity="one">%1$d time</item><item quantity="other">%1$d times</item></plurals>
     <string name="settings_next_session_hint">Audio changes apply when you start the next lesson. Card and theme changes apply now.</string>
     <string name="settings_cancel">Cancel</string>
     <string name="settings_save_error">Could not save settings. Try again.</string>

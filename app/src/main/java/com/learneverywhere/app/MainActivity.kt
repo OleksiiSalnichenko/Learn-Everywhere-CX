@@ -8,6 +8,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -72,6 +73,11 @@ object AppContainer {
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val settingsSaveError = stringResource(R.string.settings_save_error)
+    val automaticDictionaryNames = mapOf(
+        Language.DE to stringResource(R.string.automatic_german_dictionary),
+        Language.EN to stringResource(R.string.automatic_english_dictionary),
+    )
     val playbackController = remember(context) { PlaybackController(context.applicationContext) }
     val playbackState by playbackController.observeState().collectAsStateWithLifecycle()
     LaunchedEffect(repository) { repository.repairDefaults() }
@@ -83,15 +89,15 @@ object AppContainer {
     }, snackbarHost = { SnackbarHost(snackbar) }, bottomBar = {
         NavigationBar {
             NavigationBarItem(selected = tab == 0 && !settings, onClick = { tab = 0; settings = false }, icon = { Icon(Icons.Outlined.Home, stringResource(R.string.nav_home)) })
-            NavigationBarItem(selected = tab == 1 && !settings, onClick = { tab = 1; settings = false }, icon = { Icon(Icons.Outlined.LibraryBooks, stringResource(R.string.nav_library)) })
+            NavigationBarItem(selected = tab == 1 && !settings, onClick = { tab = 1; settings = false }, icon = { Icon(Icons.AutoMirrored.Outlined.LibraryBooks, stringResource(R.string.nav_library)) })
         }
     }) { padding ->
         Box(Modifier.padding(padding).fillMaxSize()) {
             if (settings) SettingsScreen(appSettings, onChange = { change -> scope.launch {
-                if (settingsRepository.update(change) is SaveSettingsResult.Failure) snackbar.showSnackbar(context.getString(R.string.settings_save_error))
+                if (settingsRepository.update(change) is SaveSettingsResult.Failure) snackbar.showSnackbar(settingsSaveError)
             } }) { settings = false }
-            else if (tab == 0) HomeScreen(repository, appSettings.mainLanguage, automaticDictionaryName = { language -> context.getString(if (language == Language.DE) R.string.automatic_german_dictionary else R.string.automatic_english_dictionary) })
-            else LibraryScreen(repository, mainLanguage = appSettings.mainLanguage, onPlay = playbackController::play)
+            else if (tab == 0) HomeScreen(repository, appSettings.mainLanguage, automaticDictionaryName = { language -> automaticDictionaryNames.getValue(language) })
+            else LibraryScreen(repository, mainLanguage = appSettings.mainLanguage, onPlay = playbackController::play, onDeleteDictionary = { playbackController.stop() })
             PlayerCard(
                 state = playbackState,
                 showCard = appSettings.showCard,

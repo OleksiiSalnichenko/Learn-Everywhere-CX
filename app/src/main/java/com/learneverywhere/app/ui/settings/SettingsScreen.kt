@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
 import com.learneverywhere.app.R
 import com.learneverywhere.app.data.Language
@@ -27,21 +28,21 @@ private data class Choice<T>(val value: T, @StringRes val label: Int)
         item { Text(stringResource(R.string.settings_next_session_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         item { ToggleRow(R.string.settings_loop, settings.loop) { value -> onChange { it.copy(loop = value) } } }
         item { ToggleRow(R.string.settings_shuffle, settings.shuffle) { value -> onChange { it.copy(shuffle = value) } } }
-        item { NumberRow(R.string.settings_ukrainian_repeats, R.string.settings_times, settings.ukrainianRepeats) { value -> onChange { it.copy(ukrainianRepeats = value) } } }
-        item { NumberRow(R.string.settings_ukrainian_repeat_pause, R.string.settings_seconds, settings.ukrainianRepeatPauseSeconds) { value -> onChange { it.copy(ukrainianRepeatPauseSeconds = value) } } }
-        item { NumberRow(R.string.settings_before_translation, R.string.settings_seconds, settings.beforeTranslationSeconds) { value -> onChange { it.copy(beforeTranslationSeconds = value) } } }
-        item { NumberRow(R.string.settings_translation_repeats, R.string.settings_times, settings.translationRepeats) { value -> onChange { it.copy(translationRepeats = value) } } }
-        item { NumberRow(R.string.settings_translation_repeat_pause, R.string.settings_seconds, settings.translationRepeatPauseSeconds) { value -> onChange { it.copy(translationRepeatPauseSeconds = value) } } }
-        item { NumberRow(R.string.settings_before_example, R.string.settings_seconds, settings.beforeExampleSeconds) { value -> onChange { it.copy(beforeExampleSeconds = value) } } }
-        item { NumberRow(R.string.settings_after_word, R.string.settings_seconds, settings.afterWordSeconds) { value -> onChange { it.copy(afterWordSeconds = value) } } }
+        item { NumberRow(R.string.settings_ukrainian_repeats, R.plurals.settings_times, settings.ukrainianRepeats) { value -> onChange { it.copy(ukrainianRepeats = value) } } }
+        item { NumberRow(R.string.settings_ukrainian_repeat_pause, R.plurals.settings_seconds, settings.ukrainianRepeatPauseSeconds) { value -> onChange { it.copy(ukrainianRepeatPauseSeconds = value) } } }
+        item { NumberRow(R.string.settings_before_translation, R.plurals.settings_seconds, settings.beforeTranslationSeconds) { value -> onChange { it.copy(beforeTranslationSeconds = value) } } }
+        item { NumberRow(R.string.settings_translation_repeats, R.plurals.settings_times, settings.translationRepeats) { value -> onChange { it.copy(translationRepeats = value) } } }
+        item { NumberRow(R.string.settings_translation_repeat_pause, R.plurals.settings_seconds, settings.translationRepeatPauseSeconds) { value -> onChange { it.copy(translationRepeatPauseSeconds = value) } } }
+        item { NumberRow(R.string.settings_before_example, R.plurals.settings_seconds, settings.beforeExampleSeconds) { value -> onChange { it.copy(beforeExampleSeconds = value) } } }
+        item { NumberRow(R.string.settings_after_word, R.plurals.settings_seconds, settings.afterWordSeconds) { value -> onChange { it.copy(afterWordSeconds = value) } } }
         item { ToggleRow(R.string.settings_include_example, settings.includeExample) { value -> onChange { it.copy(includeExample = value) } } }
         item { ToggleRow(R.string.settings_show_card, settings.showCard) { value -> onChange { it.copy(showCard = value) } } }
         item { TextButton(onClick = onBack, modifier = Modifier.padding(vertical = 16.dp)) { Text(stringResource(R.string.nav_back)) } }
     }
 }
 
-@Composable private fun NumberRow(@StringRes label: Int, @StringRes unit: Int, selected: Int, onSelect: (Int) -> Unit) =
-    ChoiceRow(label, (1..6).map { Choice(it, unit) }, selected, valueLabel = { value, labelId -> stringResource(labelId, value) }, onSelect = onSelect)
+@Composable private fun NumberRow(@StringRes label: Int, unit: Int, selected: Int, onSelect: (Int) -> Unit) =
+    ChoiceRow(label, (1..6).map { Choice(it, unit) }, selected, valueLabel = { value, labelId -> pluralStringResource(labelId, value, value) }, onSelect = onSelect)
 
 @Composable private fun ToggleRow(@StringRes label: Int, checked: Boolean, onChecked: (Boolean) -> Unit) {
     Row(Modifier.fillMaxWidth().clickable { onChecked(!checked) }.padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {

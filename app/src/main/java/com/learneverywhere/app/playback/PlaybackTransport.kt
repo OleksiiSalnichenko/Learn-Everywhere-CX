@@ -1,6 +1,7 @@
 package com.learneverywhere.app.playback
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 
 enum class TransportState { IDLE, PLAYING, PAUSED, STOPPED }
 
@@ -38,6 +39,7 @@ class PlaybackTransport(
 }
 
 /** Routes MediaSession and lockscreen commands through the same terminal transport state. */
+@androidx.annotation.OptIn(markerClass = [UnstableApi::class])
 class TransportPlayer(
     player: Player,
     private val transport: PlaybackTransport,

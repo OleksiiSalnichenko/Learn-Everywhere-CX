@@ -12,12 +12,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
@@ -39,8 +42,9 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
 @Composable fun LibraryScreen(repository: DictionaryRepository, mainLanguage: Language? = Language.DE,
     onPlay: (String) -> Unit = {}, onDeleteDictionary: suspend (String) -> Unit = {}) {
     val context = LocalContext.current
+    val resources = LocalResources.current
     val scope = rememberCoroutineScope()
-    val transfer = remember(repository, context) { DictionaryTransfer(repository) { number -> context.getString(R.string.library_import_suffix, number) } }
+    val transfer = remember(repository, resources) { DictionaryTransfer(repository) { number -> resources.getString(R.string.library_import_suffix, number) } }
     val exportStore = remember(context) { PendingExportStore(context.filesDir.resolve("pending-exports")) }
     val languages = if (mainLanguage == Language.EN) listOf(Language.EN, Language.DE) else listOf(Language.DE, Language.EN)
     var language by rememberSaveable(mainLanguage) { mutableStateOf(languages.first()) }
@@ -69,8 +73,8 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
         RepositoryException.Reason.INVALID_NAME -> invalidName
         RepositoryException.Reason.DUPLICATE_NAME -> duplicateName
         RepositoryException.Reason.INVALID_WORD -> invalidWord
-        RepositoryException.Reason.MISSING_DICTIONARY -> context.getString(R.string.library_json_missing_dictionary)
-        else -> (exception as? TransferException)?.let { context.getString(transferMessage(it.problem)) } ?: generalError
+        RepositoryException.Reason.MISSING_DICTIONARY -> resources.getString(R.string.library_json_missing_dictionary)
+        else -> (exception as? TransferException)?.let { resources.getString(transferMessage(it.problem)) } ?: generalError
     }
     fun work(action: suspend () -> Unit) {
         scope.launch {
@@ -89,7 +93,7 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
             }
             when (result) {
                 is ImportPreview.Valid -> importPreview = result
-                is ImportPreview.Invalid -> error = context.getString(R.string.library_issue_at, result.issue.location, context.getString(transferMessage(result.issue.problem)))
+                is ImportPreview.Invalid -> error = resources.getString(R.string.library_issue_at, result.issue.location, resources.getString(transferMessage(result.issue.problem)))
             }
         }
     }
@@ -98,7 +102,7 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
         pendingExportName = null
         when {
             uri == null -> if (name != null) scope.launch(Dispatchers.IO) { exportStore.delete(name) }
-            name == null -> error = context.getString(R.string.library_export_missing)
+            name == null -> error = resources.getString(R.string.library_export_missing)
             else -> work {
                 try {
                     withContext(Dispatchers.IO) {
@@ -154,7 +158,7 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
                     ) {
                         Text(stringResource(R.string.library_default), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
                         Text(current.dictionary.name, style = MaterialTheme.typography.titleLarge)
-                        Text(stringResource(R.string.library_words, current.wordCount))
+                        Text(pluralStringResource(R.plurals.library_words, current.wordCount, current.wordCount))
                     }
                     FilledIconButton(onClick = { onPlay(current.dictionary.id) }, enabled = current.wordCount > 0, modifier = Modifier.size(52.dp)) {
                         Icon(Icons.Outlined.PlayArrow, stringResource(R.string.library_play, current.dictionary.name))
@@ -165,7 +169,7 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
         }
         if (selected != null) {
             val selectedWordCount = selected.wordCount
-            TextButton(onClick = { selectedId = null; selectedWordId = null }) { Icon(Icons.Outlined.ArrowBack, null); Text(stringResource(R.string.nav_back)) }
+            TextButton(onClick = { selectedId = null; selectedWordId = null }) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, null); Text(stringResource(R.string.nav_back)) }
             Text(selected.dictionary.name, style = MaterialTheme.typography.headlineSmall)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 LibraryAction(Icons.Outlined.DeleteForever, R.string.library_delete_dictionary, !busy) { dialog = LibraryDialog.DELETE_DICTIONARY }
@@ -224,7 +228,7 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
                         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                             Column(Modifier.weight(1f).clickable { selectedId = item.dictionary.id }.padding(16.dp)) {
                                 Text(item.dictionary.name, style = MaterialTheme.typography.titleMedium)
-                                Text(stringResource(R.string.library_words, item.wordCount))
+                                Text(pluralStringResource(R.plurals.library_words, item.wordCount, item.wordCount))
                             }
                             val description = stringResource(R.string.library_make_default, item.dictionary.name)
                             RadioButton(selected = item.isDefault, onClick = { work { repository.setDefault(item.dictionary.id) } },
@@ -249,7 +253,7 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
         }
         LibraryDialog.DELETE_DICTIONARY -> selected?.let { item ->
             AlertDialog(onDismissRequest = { if (!busy) dialog = null }, title = { Text(stringResource(R.string.library_delete_dictionary)) },
-                text = { Text(stringResource(R.string.library_confirm_dictionary, item.dictionary.name, item.wordCount)) },
+                text = { Text(pluralStringResource(R.plurals.library_confirm_dictionary, item.wordCount, item.dictionary.name, item.wordCount)) },
                 confirmButton = { TextButton(enabled = !busy, onClick = { work {
                     onDeleteDictionary(item.dictionary.id); repository.deleteDictionary(item.dictionary.id)
                     selectedId = null; selectedWordId = null; dialog = null
@@ -278,7 +282,8 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
     }
     importPreview?.let { preview -> AlertDialog(onDismissRequest = { if (!busy) importPreview = null }, title = { Text(stringResource(R.string.library_import_preview)) },
         text = { Column(Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState())) {
-            Text(stringResource(R.string.library_import_count, preview.dictionaries.size, preview.wordCount))
+            Text(pluralStringResource(R.plurals.library_import_dictionaries, preview.dictionaries.size, preview.dictionaries.size))
+            Text(pluralStringResource(R.plurals.library_import_words, preview.wordCount, preview.wordCount))
             if (preview.renamed.isNotEmpty()) { Text(stringResource(R.string.library_import_copies), style = MaterialTheme.typography.titleSmall); preview.renamed.forEach { Text(it) } }
         } }, confirmButton = { TextButton(enabled = !busy, onClick = { work { transfer.commitImport(preview); importPreview = null } }) {
             Text(stringResource(R.string.library_import_confirm)) } },

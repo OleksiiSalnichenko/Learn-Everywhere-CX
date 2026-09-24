@@ -22,8 +22,8 @@
     <string name="settings_after_word">Pause nach dem Wort</string>
     <string name="settings_include_example">Beispielsatz vorlesen</string>
     <string name="settings_show_card">Wortkarte anzeigen</string>
-    <string name="settings_seconds">%1$d Sekunden</string>
-    <string name="settings_times">%1$d-mal</string>
+    <plurals name="settings_seconds"><item quantity="one">%1$d Sekunde</item><item quantity="other">%1$d Sekunden</item></plurals>
+    <plurals name="settings_times"><item quantity="one">%1$d-mal</item><item quantity="other">%1$d-mal</item></plurals>
     <string name="settings_next_session_hint">Audioänderungen gelten ab der nächsten Lektion. Karte und Design ändern sich sofort.</string>
     <string name="settings_cancel">Abbrechen</string>
     <string name="settings_save_error">Einstellungen konnten nicht gespeichert werden. Versuche es erneut.</string>

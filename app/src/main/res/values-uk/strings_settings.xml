@@ -22,8 +22,8 @@
     <string name="settings_after_word">Пауза після слова</string>
     <string name="settings_include_example">Озвучувати речення-приклад</string>
     <string name="settings_show_card">Показувати картку слова</string>
-    <string name="settings_seconds">%1$d с</string>
-    <string name="settings_times">%1$d разів</string>
+    <plurals name="settings_seconds"><item quantity="one">%1$d с</item><item quantity="few">%1$d с</item><item quantity="many">%1$d с</item><item quantity="other">%1$d с</item></plurals>
+    <plurals name="settings_times"><item quantity="one">%1$d раз</item><item quantity="few">%1$d рази</item><item quantity="many">%1$d разів</item><item quantity="other">%1$d разу</item></plurals>
     <string name="settings_next_session_hint">Зміни аудіо застосуються з наступного запуску уроку. Картка й тема змінюються одразу.</string>
     <string name="settings_cancel">Скасувати</string>
     <string name="settings_save_error">Не вдалося зберегти налаштування. Повторіть спробу.</string>

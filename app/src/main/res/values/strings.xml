@@ -4,10 +4,6 @@
     <string name="nav_library">Dictionaries</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_back">Back</string>
-    <string name="shell_home">Your words, wherever you are.</string>
-    <string name="shell_translation">Word translation will be available after setup.</string>
-    <string name="shell_settings">Settings are being prepared.</string>
-    <string name="shell_playback">Audio playback is not available in this version.</string>
     <string name="automatic_german_dictionary">My German words</string>
     <string name="automatic_english_dictionary">My English words</string>
 </resources>

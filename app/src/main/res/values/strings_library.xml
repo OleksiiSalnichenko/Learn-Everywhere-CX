@@ -6,12 +6,10 @@
     <string name="library_create">New dictionary</string>
     <string name="library_name">Dictionary name</string>
     <string name="library_cancel">Cancel</string>
-    <string name="library_save">Create</string>
     <string name="library_default">Default</string>
     <string name="library_make_default">Make %1$s default</string>
-    <string name="library_words">%1$d words</string>
+    <plurals name="library_words"><item quantity="one">%1$d word</item><item quantity="other">%1$d words</item></plurals>
     <string name="library_play">Play %1$s</string>
-    <string name="library_error">Could not save. Use a unique name of 1–60 characters and try again.</string>
     <string name="library_details_empty">No words yet</string>
     <string name="library_load_more">Load more words</string>
     <string name="library_rename">Rename dictionary</string>
@@ -20,7 +18,7 @@
     <string name="library_edit_selected">Edit selected word</string>
     <string name="library_delete">Delete</string>
     <string name="library_ok">OK</string>
-    <string name="library_confirm_dictionary">Delete %1$s and its %2$d words?</string>
+    <plurals name="library_confirm_dictionary"><item quantity="one">Delete %1$s and its %2$d word?</item><item quantity="other">Delete %1$s and its %2$d words?</item></plurals>
     <string name="library_confirm_word">Delete %1$s?</string>
     <string name="library_ukrainian">Ukrainian</string>
     <string name="library_translation1">Translation 1</string>
@@ -31,7 +29,8 @@
     <string name="library_export_one">Export this dictionary</string>
     <string name="library_export_all">Export all dictionaries</string>
     <string name="library_import_preview">Review import</string>
-    <string name="library_import_count">%1$d dictionaries, %2$d words</string>
+    <plurals name="library_import_dictionaries"><item quantity="one">%1$d dictionary</item><item quantity="other">%1$d dictionaries</item></plurals>
+    <plurals name="library_import_words"><item quantity="one">%1$d word</item><item quantity="other">%1$d words</item></plurals>
     <string name="library_import_copies">Renamed copies</string>
     <string name="library_import_confirm">Import</string>
     <string name="library_error_title">Could not complete action</string>
@@ -39,8 +38,6 @@
     <string name="library_invalid_name">Use a name of 1–60 characters.</string>
     <string name="library_duplicate_name">A dictionary with this name already exists in this language.</string>
     <string name="library_invalid_word">Check the word fields and try again.</string>
-    <string name="library_no_export">There are no dictionaries to export.</string>
-    <string name="library_too_many_export">More than 100 dictionaries. Export them separately.</string>
     <string name="library_issue_at">%1$s: %2$s</string>
     <string name="library_json_invalid">Malformed JSON or invalid UTF-8.</string>
     <string name="library_json_type">Wrong or missing field type.</string>

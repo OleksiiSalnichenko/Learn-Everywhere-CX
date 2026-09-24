@@ -15,6 +15,8 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -178,7 +180,7 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
         } else permission.launch(Manifest.permission.RECORD_AUDIO)
     }
 
-    Column(Modifier.fillMaxSize().padding(24.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding().padding(24.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceVariant) {
             IconButton(onClick = ::microphone, modifier = Modifier.size(124.dp), enabled = !busy && !saving) {
                 Icon(if (speechSessionActive) Icons.Outlined.Stop else Icons.Outlined.Mic,
@@ -230,7 +232,7 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
         confirmButton = {}, dismissButton = { TextButton(onClick = { picker = "" }) { Text(stringResource(R.string.home_cancel)) } })
     if (draft != null) AlertDialog(onDismissRequest = { if (!saving) previewData = "" }, title = { Text(stringResource(R.string.home_preview)) },
         text = {
-            Column {
+            Column(Modifier.heightIn(max = 420.dp).verticalScroll(rememberScrollState())) {
                 Text("${stringResource(R.string.home_ukrainian)}: ${draft.content.ukrainian}")
                 Text("${stringResource(R.string.home_meaning_one)}: ${draft.content.translation1}")
                 draft.content.translation2?.let { Text("${stringResource(R.string.home_meaning_two)}: $it") }

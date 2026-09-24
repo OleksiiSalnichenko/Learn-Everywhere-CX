@@ -14,7 +14,7 @@ import com.learneverywhere.app.playback.*
 
 @Composable
 fun PlayerCard(state: PlaybackUiState, showCard: Boolean, onPause: () -> Unit, onResume: () -> Unit, onStop: () -> Unit, onRetry: () -> Unit, modifier: Modifier = Modifier) {
-    if (state == PlaybackUiState.Stopped || (state is PlaybackUiState.Active && !showCard)) return
+    if (state == PlaybackUiState.Stopped) return
     Card(modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), elevation = CardDefaults.cardElevation(6.dp)) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             when (state) {

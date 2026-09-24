@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "AGENTS.md",
   "skillDir": "/home/osalnichenko/.agents/skills/autopilot",
   "startedAt": "2026-09-14T20:08:30+02:00",
-  "updatedAt": "2026-09-23T00:36:13+02:00",
+  "updatedAt": "2026-09-24T10:19:13+02:00",
   "finishedAt": null,
   "stages": [
     {
@@ -50,13 +50,13 @@ window.STATE =
       "id": "build",
       "status": "in-progress",
       "startedAt": "2026-09-15T07:54:25+02:00",
-      "note": "Wave 4: фоновий аудіоплеєр"
+      "note": "Wave 5: приймальні перевірки й документація"
     },
     {
       "id": "review",
       "status": "in-progress",
       "startedAt": "2026-09-22T11:28:16+02:00",
-      "note": "Рев’ю таску 05 за Manifest/Spec і Craft"
+      "note": "Рев’ю таску 06 за Manifest/Spec і Craft"
     },
     {
       "id": "final",
@@ -65,8 +65,8 @@ window.STATE =
   ],
   "requirements": {
     "total": 65,
-    "done": 56,
-    "inTicket": 9,
+    "done": 60,
+    "inTicket": 5,
     "inSpec": 0,
     "placeholder": 0,
     "deferred": 0,
@@ -250,13 +250,16 @@ window.STATE =
         "app/src/main/java/com/learneverywhere/app/ui/player",
         "app/src/main/AndroidManifest.xml"
       ],
-      "status": "repair",
+      "status": "done",
       "retries": 1,
       "repairs": 2,
       "handoffs": 0,
       "file": "05-playback.md",
       "startedAt": "2026-09-22T11:42:53+02:00",
-      "executor": "/root/w4_playback_resume"
+      "executor": "/root/w4_playback_resume",
+      "finishedAt": "2026-09-23T00:45:04+02:00",
+      "tests": "Full build green: debug/release APK, 40 unit tests, AndroidTest APK; 3 Ticket05 tests passed; device smoke unavailable",
+      "commit": "68fa940"
     },
     {
       "id": "06",
@@ -338,11 +341,13 @@ window.STATE =
         "README.md",
         ".github"
       ],
-      "status": "pending",
-      "retries": 0,
+      "status": "review",
+      "retries": 1,
       "repairs": 0,
       "handoffs": 0,
-      "file": "06-acceptance.md"
+      "file": "06-acceptance.md",
+      "startedAt": "2026-09-23T00:45:04+02:00",
+      "executor": "/root/w5_acceptance_resume"
     }
   ],
   "singlePass": null,
@@ -625,6 +630,20 @@ window.STATE =
       "tests": "Full debug/release/unit/AndroidTest APK build passed; 37 unit tests total, 7 Ticket04 tests passed; device locale/large-font smoke unverified",
       "commit": "f7850bb",
       "pushedAt": "2026-09-22T11:42:53+02:00"
+    },
+    "05": {
+      "manifestSpecReviewer": "/root/w4_manifest_review",
+      "manifestSpecVerdict": "manifest-clean; nonblocking-spec-findings-recorded",
+      "craftReviewer": "/root/w4_craft_review",
+      "craftVerdict": "passed-after-two-repairs; nonblocking-findings-recorded",
+      "repairItems": [
+        "production lifecycle test uses service transport seam",
+        "MediaSession lockscreen commands route through TransportPlayer",
+        "terminal stop rejects commands before onDestroy release"
+      ],
+      "tests": "Full debug/release/unit/AndroidTest APK build passed; 40 unit tests total, 3 Ticket05 tests passed; physical-device playback smoke unavailable",
+      "commit": "68fa940",
+      "pushedAt": "2026-09-23T00:45:04+02:00"
     }
   },
   "wave1Commit": "3224f03",
