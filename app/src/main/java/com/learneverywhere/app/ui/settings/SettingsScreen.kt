@@ -2,6 +2,8 @@ package com.learneverywhere.app.ui.settings
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -59,7 +61,7 @@ private data class Choice<T>(val value: T, @StringRes val label: Int)
         Column(Modifier.weight(1f)) { Text(stringResource(label), style = MaterialTheme.typography.bodyLarge); Text(valueLabel(current.value, current.label), color = MaterialTheme.colorScheme.onSurfaceVariant) }
     }
     if (open) AlertDialog(onDismissRequest = { open = false }, title = { Text(stringResource(label)) },
-        text = { Column { choices.forEach { choice -> TextButton(onClick = { onSelect(choice.value); open = false }, modifier = Modifier.fillMaxWidth()) { Text(valueLabel(choice.value, choice.label)) } } } },
+        text = { Column(Modifier.heightIn(max = 420.dp).verticalScroll(rememberScrollState())) { choices.forEach { choice -> TextButton(onClick = { onSelect(choice.value); open = false }, modifier = Modifier.fillMaxWidth()) { Text(valueLabel(choice.value, choice.label)) } } } },
         confirmButton = {}, dismissButton = { TextButton(onClick = { open = false }) { Text(stringResource(R.string.settings_cancel)) } })
 }
 

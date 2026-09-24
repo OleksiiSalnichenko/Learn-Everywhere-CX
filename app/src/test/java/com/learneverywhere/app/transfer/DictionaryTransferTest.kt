@@ -14,13 +14,14 @@ class DictionaryTransferTest {
     @Test fun `empty dictionary file is rejected before commit`() = runBlocking {
         val transfer = transfer(MemoryRepository())
         val preview = transfer.previewImport(ByteArrayInputStream("""{"schemaVersion":1,"dictionaries":[]}""".toByteArray()))
-        assertTrue(preview is ImportPreview.Invalid)
+        assertEquals(ImportIssue("dictionaries", TransferProblem.EMPTY), (preview as ImportPreview.Invalid).issue)
     }
 
     @Test fun `present blank second translation is an invalid field`() = runBlocking {
         val source = """{"schemaVersion":1,"dictionaries":[{"language":"de","name":"Test","words":[{"ukrainian":"кіт","translation1":"die Katze","translation2":" ","example":"Die Katze schläft."}]}]}"""
         val preview = transfer(MemoryRepository()).previewImport(ByteArrayInputStream(source.toByteArray()))
         assertEquals("dictionaries[1].words[1].translation2", (preview as ImportPreview.Invalid).issue.location)
+        assertEquals(TransferProblem.INVALID_TRANSLATION2, preview.issue.problem)
     }
 
     @Test fun `export refuses more than ten thousand words before writing`() = runBlocking {
@@ -34,7 +35,8 @@ class DictionaryTransferTest {
         try {
             transfer(repository).export(listOf(dictionary.id), output)
             fail("Export should reject a file the importer cannot accept")
-        } catch (expected: IllegalArgumentException) {
+        } catch (expected: TransferException) {
+            assertEquals(TransferProblem.TOO_MANY_WORDS, expected.problem)
             assertEquals(0, output.size())
         }
     }
@@ -43,11 +45,14 @@ class DictionaryTransferTest {
         val transfer = transfer(MemoryRepository())
         val malformed = transfer.previewImport(ByteArrayInputStream("""{"schemaVersion":"1","dictionaries":[{}]}""".toByteArray()))
         assertEquals("file.schemaVersion", (malformed as ImportPreview.Invalid).issue.location)
+        assertEquals(TransferProblem.INVALID_TYPE, malformed.issue.problem)
         val unknown = transfer.previewImport(ByteArrayInputStream("""{"schemaVersion":2,"dictionaries":[{}]}""".toByteArray()))
         assertEquals("schemaVersion", (unknown as ImportPreview.Invalid).issue.location)
+        assertEquals(TransferProblem.UNKNOWN_VERSION, unknown.issue.problem)
         val tooLarge = ByteArrayInputStream(ByteArray(DictionaryTransfer.MAX_BYTES + 1) { ' '.code.toByte() })
         val oversized = transfer.previewImport(tooLarge)
         assertEquals("file", (oversized as ImportPreview.Invalid).issue.location)
+        assertEquals(TransferProblem.TOO_LARGE, oversized.issue.problem)
     }
 
     @Test fun `repeated import creates visible numbered copies without overwriting`() = runBlocking {

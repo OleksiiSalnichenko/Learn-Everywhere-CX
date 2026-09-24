@@ -59,17 +59,19 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
     var busy by remember { mutableStateOf(false) }
     var saving by remember { mutableStateOf(false) }
     var duplicate by rememberSaveable { mutableStateOf(false) }
+    var duplicateData by rememberSaveable { mutableStateOf("") }
+    val existingDuplicate = remember(duplicateData) { decodeWordContent(duplicateData) }
     var destinationChanged by rememberSaveable { mutableStateOf(false) }
     var error by remember { mutableStateOf<TranslationException.Reason?>(null) }
     var saveError by rememberSaveable { mutableStateOf(false) }
     var speechMessage by remember { mutableIntStateOf(0) }
     var listening by remember { mutableStateOf(false) }
     var speechSessionActive by remember { mutableStateOf(false) }
-    var cancelledSpeech by remember { mutableStateOf(false) }
     var recognized by remember { mutableStateOf("") }
-    val speech = remember(context) {
-        if (SpeechRecognizer.isRecognitionAvailable(context)) SpeechRecognizer.createSpeechRecognizer(context) else null
-    }
+    var nextSpeechSession by remember { mutableLongStateOf(0L) }
+    var activeSpeechSession by remember { mutableLongStateOf(0L) }
+    var activeSpeech by remember { mutableStateOf<SpeechRecognizer?>(null) }
+    val speechAvailable = remember(context) { SpeechRecognizer.isRecognitionAvailable(context) }
 
     fun prepare() {
         if (busy || saving) return
@@ -82,8 +84,13 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
                         picker = "source"
                     }
                     is PrepareResult.NeedTarget -> picker = "target"
-                    is PrepareResult.Draft -> { previewData = encodeDraft(result.draft); duplicate = false; destinationChanged = false }
-                    is PrepareResult.Duplicate -> { previewData = encodeDraft(result.draft); duplicate = true; destinationChanged = false }
+                    is PrepareResult.Draft -> { previewData = encodeDraft(result.draft); duplicate = false; duplicateData = ""; destinationChanged = false }
+                    is PrepareResult.Duplicate -> {
+                        previewData = encodeDraft(result.draft)
+                        duplicate = true
+                        duplicateData = encodeWordContent(result.existing.content)
+                        destinationChanged = false
+                    }
                     is PrepareResult.Failure -> error = result.reason
                 }
             } catch (cancelled: CancellationException) {
@@ -105,7 +112,7 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
                 when (val result = intake.confirm(current)) {
                     is ConfirmResult.Saved -> {
                         previewData = ""; input = ""; sourceHint = null; targetHint = null
-                        duplicate = false; destinationChanged = false; speechMessage = R.string.home_saved
+                        duplicate = false; duplicateData = ""; destinationChanged = false; speechMessage = R.string.home_saved
                     }
                     is ConfirmResult.DestinationChanged -> {
                         previewData = encodeDraft(result.draft); destinationChanged = true
@@ -122,29 +129,47 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
         }
     }
 
-    DisposableEffect(speech) {
-        speech?.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) { speechSessionActive = true; listening = true }
+    fun listener(session: Long, recognizer: SpeechRecognizer) = object : RecognitionListener {
+            private fun isCurrent() = activeSpeechSession == session && activeSpeech === recognizer
+            private fun finish() {
+                activeSpeechSession = 0
+                activeSpeech = null
+                speechSessionActive = false
+                listening = false
+                recognizer.destroy()
+            }
+            override fun onReadyForSpeech(params: Bundle?) {
+                if (!isCurrent()) return
+                speechSessionActive = true; listening = true
+            }
             override fun onBeginningOfSpeech() = Unit
             override fun onRmsChanged(rmsdB: Float) = Unit
             override fun onBufferReceived(buffer: ByteArray?) = Unit
             override fun onEndOfSpeech() = Unit
             override fun onError(code: Int) {
-                speechSessionActive = false; listening = false
-                if (!cancelledSpeech) speechMessage = if (code == SpeechRecognizer.ERROR_NO_MATCH || code == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) R.string.home_speech_none else R.string.home_speech_error
-                cancelledSpeech = false
+                if (!isCurrent()) return
+                finish()
+                speechMessage = if (code == SpeechRecognizer.ERROR_NO_MATCH || code == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) R.string.home_speech_none else R.string.home_speech_error
             }
             override fun onResults(results: Bundle?) {
-                speechSessionActive = false; listening = false
-                if (cancelledSpeech) { cancelledSpeech = false; return }
+                if (!isCurrent()) return
                 val word = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()?.trim().orEmpty()
+                finish()
                 if (word.isEmpty()) speechMessage = R.string.home_speech_none
                 else { recognized = word; speechMessage = 0 }
             }
             override fun onPartialResults(partialResults: Bundle?) = Unit
             override fun onEvent(eventType: Int, params: Bundle?) = Unit
-        })
-        onDispose { speech?.cancel(); speech?.destroy() }
+        }
+    DisposableEffect(Unit) {
+        onDispose {
+            activeSpeechSession = 0
+            speechSessionActive = false
+            listening = false
+            activeSpeech?.cancel()
+            activeSpeech?.destroy()
+            activeSpeech = null
+        }
     }
     LaunchedEffect(recognized) {
         if (recognized.isNotEmpty()) {
@@ -155,11 +180,25 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
         }
     }
     fun startSpeech() {
-        if (speech == null) { speechMessage = R.string.home_speech_unavailable; return }
-        try {
-            cancelledSpeech = false; speechMessage = 0; speechSessionActive = true; listening = true
-            speech.startListening(recognizerIntent(voiceLanguage))
+        if (!speechAvailable) { speechMessage = R.string.home_speech_unavailable; return }
+        if (speechSessionActive) return
+        val recognizer = try {
+            SpeechRecognizer.createSpeechRecognizer(context)
         } catch (_: Exception) {
+            speechMessage = R.string.home_speech_unavailable
+            return
+        }
+        try {
+            val session = ++nextSpeechSession
+            activeSpeechSession = session
+            activeSpeech = recognizer
+            recognizer.setRecognitionListener(listener(session, recognizer))
+            speechMessage = 0; speechSessionActive = true; listening = true
+            recognizer.startListening(recognizerIntent(voiceLanguage))
+        } catch (_: Exception) {
+            activeSpeechSession = 0
+            activeSpeech = null
+            recognizer.destroy()
             speechSessionActive = false; listening = false; speechMessage = R.string.home_speech_unavailable
         }
     }
@@ -171,10 +210,10 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
         if (speechSessionActive) {
             // stopListening is asynchronous. Keep the session occupied until onResults/onError,
             // so a second recognizer session cannot overlap the first one.
-            if (listening) { speech?.stopListening(); listening = false }
+            if (listening) { activeSpeech?.stopListening(); listening = false }
             return
         }
-        if (speech == null) { speechMessage = R.string.home_speech_unavailable; return }
+        if (!speechAvailable) { speechMessage = R.string.home_speech_unavailable; return }
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             startSpeech()
         } else permission.launch(Manifest.permission.RECORD_AUDIO)
@@ -193,11 +232,15 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
         if (speechSessionActive) {
             ListeningWave()
             TextButton(onClick = {
-                cancelledSpeech = true; speech?.cancel(); speechSessionActive = false
+                activeSpeechSession = 0
+                activeSpeech?.cancel()
+                activeSpeech?.destroy()
+                activeSpeech = null
+                speechSessionActive = false
                 listening = false; speechMessage = 0
             }) { Text(stringResource(R.string.home_cancel)) }
         }
-        TextButton(onClick = { picker = "voice" }, enabled = !listening && !busy) {
+        TextButton(onClick = { picker = "voice" }, enabled = !speechSessionActive && !busy) {
             val name = SourceLanguage.entries.firstOrNull { it.code == voiceLanguage }?.let { stringResource(sourceString(it)) } ?: stringResource(R.string.home_voice_auto)
             Text(stringResource(R.string.home_voice_language, name))
         }
@@ -237,13 +280,22 @@ fun HomeScreen(repository: DictionaryRepository, mainLanguage: Language?, automa
                 Text("${stringResource(R.string.home_meaning_one)}: ${draft.content.translation1}")
                 draft.content.translation2?.let { Text("${stringResource(R.string.home_meaning_two)}: $it") }
                 Text("${stringResource(R.string.home_example)}: ${draft.content.example}")
-                Text(stringResource(R.string.home_destination, draft.dictionaryName.orEmpty()))
-                if (duplicate) Text(stringResource(R.string.home_duplicate, draft.dictionaryName.orEmpty()), color = MaterialTheme.colorScheme.error)
+                val destinationLanguage = stringResource(if (draft.language == Language.DE) R.string.home_source_de else R.string.home_source_en)
+                Text(stringResource(R.string.home_destination, "$destinationLanguage · ${draft.dictionaryName.orEmpty()}"))
+                if (duplicate) {
+                    Text(stringResource(R.string.home_duplicate, draft.dictionaryName.orEmpty()), color = MaterialTheme.colorScheme.error)
+                    existingDuplicate?.let { existing ->
+                        Text("${stringResource(R.string.home_ukrainian)}: ${existing.ukrainian}")
+                        Text("${stringResource(R.string.home_meaning_one)}: ${existing.translation1}")
+                        existing.translation2?.let { Text("${stringResource(R.string.home_meaning_two)}: $it") }
+                        Text("${stringResource(R.string.home_example)}: ${existing.example}")
+                    }
+                }
                 if (destinationChanged) Text(stringResource(R.string.home_destination_changed, draft.dictionaryName.orEmpty()), color = MaterialTheme.colorScheme.error)
                 if (saveError) Text(stringResource(R.string.home_error_save), color = MaterialTheme.colorScheme.error)
             }
         }, confirmButton = { TextButton(onClick = ::confirm, enabled = !saving) { Text(stringResource(if (saving) R.string.home_saving else R.string.home_submit)) } },
-        dismissButton = { TextButton(onClick = { previewData = ""; duplicate = false; destinationChanged = false }, enabled = !saving) { Text(stringResource(R.string.home_cancel)) } })
+        dismissButton = { TextButton(onClick = { previewData = ""; duplicate = false; duplicateData = ""; destinationChanged = false }, enabled = !saving) { Text(stringResource(R.string.home_cancel)) } })
 }
 
 @Composable
@@ -288,12 +340,15 @@ private fun errorString(reason: TranslationException.Reason) = when (reason) {
     TranslationException.Reason.QUOTA -> R.string.home_error_quota
     TranslationException.Reason.NETWORK -> R.string.home_error_network
     TranslationException.Reason.INVALID_INPUT -> R.string.home_error_input
+    TranslationException.Reason.UNSUPPORTED_LANGUAGE -> R.string.home_error_unsupported_language
     TranslationException.Reason.INVALID_CONTENT -> R.string.home_error_invalid
     TranslationException.Reason.UNAVAILABLE -> R.string.home_error_unavailable
 }
 
 internal fun canRetryTranslation(reason: TranslationException.Reason): Boolean = when (reason) {
-    TranslationException.Reason.INVALID_INPUT, TranslationException.Reason.NOT_CONFIGURED -> false
+    TranslationException.Reason.INVALID_INPUT,
+    TranslationException.Reason.UNSUPPORTED_LANGUAGE,
+    TranslationException.Reason.NOT_CONFIGURED -> false
     TranslationException.Reason.INVALID_CONTENT,
     TranslationException.Reason.QUOTA,
     TranslationException.Reason.NETWORK,

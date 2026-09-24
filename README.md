@@ -4,7 +4,7 @@ Learn Everywhere is an Android vocabulary app for German and English words with 
 
 ## Requirements
 
-- JDK 21 (the Android Studio JBR at `/home/osalnichenko/android-studio/jbr` is known to work)
+- JDK 21 (the Android Studio JBR at `$HOME/android-studio/jbr` is a common option)
 - Android SDK platform 37 and build tools 36
 - Android 8.0 / API 26 or newer for the app
 - An Android device or emulator for instrumentation and manual checks
@@ -16,13 +16,13 @@ Firebase configuration is optional for local builds. Without it, the Home screen
 From the repository root:
 
 ```sh
-JAVA_HOME=/home/osalnichenko/android-studio/jbr ./gradlew :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:assembleDebugAndroidTest :app:lintDebug --no-daemon
+JAVA_HOME="$HOME/android-studio/jbr" ./gradlew :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:assembleDebugAndroidTest :app:lintDebug --no-daemon
 ```
 
 Run one JVM test class:
 
 ```sh
-JAVA_HOME=/home/osalnichenko/android-studio/jbr ./gradlew :app:testDebugUnitTest --tests com.learneverywhere.app.data.DictionaryRepositoryTest --no-daemon
+JAVA_HOME="$HOME/android-studio/jbr" ./gradlew :app:testDebugUnitTest --tests com.learneverywhere.app.data.DictionaryRepositoryTest --no-daemon
 ```
 
 Artifacts:

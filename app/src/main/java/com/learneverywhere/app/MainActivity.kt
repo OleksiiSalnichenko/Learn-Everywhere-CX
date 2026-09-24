@@ -80,6 +80,10 @@ object AppContainer {
     )
     val playbackController = remember(context) { PlaybackController(context.applicationContext) }
     val playbackState by playbackController.observeState().collectAsStateWithLifecycle()
+    var playbackDictionaryId by rememberSaveable { mutableStateOf<String?>(null) }
+    LaunchedEffect(playbackState) {
+        if (playbackState == com.learneverywhere.app.playback.PlaybackUiState.Stopped) playbackDictionaryId = null
+    }
     LaunchedEffect(repository) { repository.repairDefaults() }
     BackHandler(settings || tab != 0) { if (settings) settings = false else tab = 0 }
     Scaffold(topBar = {
@@ -97,7 +101,14 @@ object AppContainer {
                 if (settingsRepository.update(change) is SaveSettingsResult.Failure) snackbar.showSnackbar(settingsSaveError)
             } }) { settings = false }
             else if (tab == 0) HomeScreen(repository, appSettings.mainLanguage, automaticDictionaryName = { language -> automaticDictionaryNames.getValue(language) })
-            else LibraryScreen(repository, mainLanguage = appSettings.mainLanguage, onPlay = playbackController::play, onDeleteDictionary = { playbackController.stop() })
+            else LibraryScreen(repository, mainLanguage = appSettings.mainLanguage,
+                onPlay = { id -> playbackDictionaryId = id; playbackController.play(id) },
+                onDeleteDictionary = { id ->
+                    if (playbackDictionaryId == id) {
+                        playbackController.stop()
+                        playbackDictionaryId = null
+                    }
+                })
             PlayerCard(
                 state = playbackState,
                 showCard = appSettings.showCard,

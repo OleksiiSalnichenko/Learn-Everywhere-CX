@@ -27,3 +27,21 @@ internal fun decodeDraft(value: String): WordDraft? = try {
             obj["dictionaryId"]?.jsonPrimitive?.content, obj["dictionaryName"]?.jsonPrimitive?.content)
     }
 } catch (_: Exception) { null }
+
+internal fun encodeWordContent(content: WordContent): String = buildJsonObject {
+    put("ukrainian", content.ukrainian)
+    put("translation1", content.translation1)
+    content.translation2?.let { put("translation2", it) }
+    put("example", content.example)
+}.toString()
+
+internal fun decodeWordContent(value: String): WordContent? = try {
+    if (value.isBlank()) null else Json.parseToJsonElement(value).jsonObject.let { obj ->
+        WordContent(
+            obj.getValue("ukrainian").jsonPrimitive.content,
+            obj.getValue("translation1").jsonPrimitive.content,
+            obj["translation2"]?.jsonPrimitive?.content,
+            obj.getValue("example").jsonPrimitive.content,
+        )
+    }
+} catch (_: Exception) { null }

@@ -147,7 +147,7 @@ private enum class LibraryDialog { CREATE, RENAME, DELETE_DICTIONARY, DELETE_WOR
             }
         }
         Spacer(Modifier.height(16.dp))
-        default?.let { current ->
+        if (selected == null) default?.let { current ->
             Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
                 Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                     val openDescription = stringResource(R.string.library_open_default, current.dictionary.name)

@@ -37,4 +37,5 @@
     <string name="home_error_network">Could not connect. Check your connection and retry.</string>
     <string name="home_error_unavailable">Translation is unavailable right now. Try again later.</string>
     <string name="home_error_save">The word could not be saved. Review it and try again.</string>
+    <string name="home_error_unsupported_language">Use Ukrainian, German, or English.</string>
 </resources>

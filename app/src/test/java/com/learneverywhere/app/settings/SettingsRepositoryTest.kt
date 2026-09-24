@@ -1,6 +1,9 @@
 package com.learneverywhere.app.settings
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.emptyPreferences
 import com.learneverywhere.app.data.Language
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -8,9 +11,12 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -23,8 +29,34 @@ class SettingsRepositoryTest {
         val scope = CoroutineScope(StandardTestDispatcher(testScheduler))
         val repository = repository(scope)
 
-        assertEquals(AppSettings(), repository.observeSettings().first())
+        val defaults = repository.observeSettings().first()
+        assertEquals(Language.DE, defaults.mainLanguage)
+        assertEquals(InterfaceLanguage.ENGLISH, defaults.interfaceLanguage)
+        assertEquals(false, defaults.loop)
+        assertEquals(false, defaults.shuffle)
+        assertEquals(1, defaults.ukrainianRepeats)
+        assertEquals(2, defaults.ukrainianRepeatPauseSeconds)
+        assertEquals(3, defaults.beforeTranslationSeconds)
+        assertEquals(2, defaults.translationRepeats)
+        assertEquals(2, defaults.translationRepeatPauseSeconds)
+        assertEquals(2, defaults.beforeExampleSeconds)
+        assertEquals(2, defaults.afterWordSeconds)
+        assertEquals(false, defaults.includeExample)
+        assertEquals(true, defaults.showCard)
+        assertEquals(ThemeMode.SYSTEM, defaults.themeMode)
         scope.cancel()
+    }
+
+    @Test fun `write failure is returned with its cause`() = runTest {
+        val failure = IllegalStateException("disk unavailable")
+        val result = DataStoreSettingsRepository(ThrowingDataStore(failure)).update { it.copy(loop = true) }
+
+        assertSame(failure, (result as SaveSettingsResult.Failure).cause)
+    }
+
+    @Test(expected = CancellationException::class)
+    fun `write cancellation is rethrown`() = runTest {
+        DataStoreSettingsRepository(ThrowingDataStore(CancellationException("cancelled"))).update { it.copy(loop = true) }
     }
 
     @Test fun `every setting survives repository recreation`() = runTest {
@@ -72,4 +104,9 @@ class SettingsRepositoryTest {
     private fun repository(scope: CoroutineScope): SettingsRepository = DataStoreSettingsRepository(
         PreferenceDataStoreFactory.create(scope = scope) { temporaryFolder.newFile("empty.preferences_pb") },
     )
+
+    private class ThrowingDataStore(private val failure: Throwable) : DataStore<Preferences> {
+        override val data = flowOf(emptyPreferences())
+        override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences = throw failure
+    }
 }

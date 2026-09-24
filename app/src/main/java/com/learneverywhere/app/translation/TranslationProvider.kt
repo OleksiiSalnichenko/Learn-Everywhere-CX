@@ -21,5 +21,5 @@ interface TranslationProvider {
 }
 
 class TranslationException(val reason: Reason) : Exception(reason.name) {
-    enum class Reason { NOT_CONFIGURED, QUOTA, NETWORK, INVALID_INPUT, INVALID_CONTENT, UNAVAILABLE }
+    enum class Reason { NOT_CONFIGURED, QUOTA, NETWORK, INVALID_INPUT, UNSUPPORTED_LANGUAGE, INVALID_CONTENT, UNAVAILABLE }
 }

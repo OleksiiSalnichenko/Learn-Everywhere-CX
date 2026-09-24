@@ -37,4 +37,5 @@
     <string name="home_error_network">Keine Verbindung. Prüfe deine Verbindung und versuche es erneut.</string>
     <string name="home_error_unavailable">Übersetzung ist derzeit nicht verfügbar. Versuche es später erneut.</string>
     <string name="home_error_save">Das Wort konnte nicht gespeichert werden. Prüfe es und versuche es erneut.</string>
+    <string name="home_error_unsupported_language">Verwende Ukrainisch, Deutsch oder Englisch.</string>
 </resources>

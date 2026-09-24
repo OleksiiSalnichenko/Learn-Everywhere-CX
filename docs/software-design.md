@@ -22,6 +22,7 @@ flowchart LR
         Transfer["DictionaryTransfer"]
         Plan["PlaybackPlan / PlaybackQueue"]
         Controller["PlaybackController"]
+        PlaybackState["PlaybackUiState"]
     end
 
     subgraph Data["Local persistence"]
@@ -51,14 +52,15 @@ flowchart LR
     Settings --> SettingsRepo
     SettingsRepo --> DS
     Controller --> Service
+    Service -->|state| Controller
+    Controller --> PlaybackState
     Service --> Repo
     Service --> SettingsRepo
     Service --> Plan
     Service --> TTS
     Service --> Cache
     Repo --> Room
-    UI --> Player
-    Service --> Player
+    PlaybackState --> Player
 ```
 
 `MainActivity` owns top-level Home/Library navigation, the Settings overlay, theme and locale application, and the playback controller. `AppContainer` supplies process-wide repository and settings instances. UI code depends on public repositories and domain services rather than DAOs.
@@ -129,7 +131,7 @@ The bottom bar has Home and Dictionaries only. System Back closes the active dia
 
 Interactive icons have localized content descriptions and Material touch targets. Home scrolls and uses IME insets; long review and edit content scrolls in bounded dialogs. Library and Settings use lazy or scrollable containers. These choices reduce clipping on small screens and with large font sizes, but device rendering still requires manual validation.
 
-When `showCard=false`, playback keeps progress and Pause/Resume/Stop controls visible while omitting word content. Deleting a dictionary stops the current playback session before repository deletion.
+When `showCard=false`, playback keeps progress and Pause/Resume/Stop controls visible while omitting word content. Deleting a dictionary stops playback before repository deletion only when that dictionary owns the current session.
 
 ## Word intake
 
@@ -228,7 +230,7 @@ Firebase startup is conditional on a matching local `app/google-services.json`. 
 The acceptance command is:
 
 ```sh
-JAVA_HOME=/home/osalnichenko/android-studio/jbr ./gradlew :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:assembleDebugAndroidTest :app:lintDebug --no-daemon
+JAVA_HOME="$HOME/android-studio/jbr" ./gradlew :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:assembleDebugAndroidTest :app:lintDebug --no-daemon
 ```
 
 JVM tests cover repository transactions and persistence, default recovery, intake routing and confirmation, strict Gemini parsing, JSON limits and round trips, atomic settings updates, playback ordering/timing, bounded queue preparation, transport stop behavior, and pending export persistence. Android tests compile six Room device scenarios for defaults, transactions, persistence, cascade deletion, idempotency, and repair. Running those six tests requires a connected device or emulator.

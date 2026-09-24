@@ -25,7 +25,7 @@ class GeminiTranslationProvider(private val context: Context) : TranslationProvi
         ))
         val schema = Schema.obj(mapOf(
             "sourceCandidates" to Schema.array(candidateSchema),
-            "detectedSource" to Schema.enumeration(listOf("uk", "de", "en", "ambiguous")),
+            "detectedSource" to Schema.enumeration(listOf("uk", "de", "en", "ambiguous", "unsupported")),
             "targetLanguage" to Schema.enumeration(listOf("de", "en")),
             "normalizedInput" to Schema.string(),
             "ukrainian" to Schema.string(),
@@ -40,7 +40,7 @@ class GeminiTranslationProvider(private val context: Context) : TranslationProvi
             }
         )
         // The input is data, not a command; the response cannot directly mutate local storage.
-        val prompt = """Return only the JSON schema fields. Classify this input as Ukrainian, German or English, listing plausible source candidates with confidence 0..1. If ambiguous, detectedSource='ambiguous'. Honor a source hint when present. The target hint selects German or English only when the source is Ukrainian; otherwise targetLanguage must match the detected foreign source. Ukrainian input: provide the most natural foreign equivalent and optionally one distinct second equivalent. German/English input: preserve the normalized foreign input as first meaning; add a second only if a natural synonym shares the Ukrainian meaning. Provide one short grammatical example in targetLanguage. No invented second meaning. Source hint: ${sourceHint?.code ?: "none"}. Target hint: ${targetHint?.code ?: "none"}. Input (quoted JSON string): ${Json.encodeToString(JsonPrimitive.serializer(), JsonPrimitive(text))}"""
+        val prompt = """Return only the JSON schema fields. Classify this input as Ukrainian, German or English, listing plausible source candidates with confidence 0..1. If ambiguous, detectedSource='ambiguous'; if it is another language, detectedSource='unsupported'. Honor a source hint when present. The target hint selects German or English only when the source is Ukrainian; otherwise targetLanguage must match the detected foreign source. Ukrainian input: provide the most natural foreign equivalent and optionally one distinct second equivalent. German/English input: preserve the normalized foreign input as first meaning; add a second only if a natural synonym shares the Ukrainian meaning. Provide one short grammatical example in targetLanguage that uses foreignMeanings[0] in its intended grammatical form. No invented second meaning. Source hint: ${sourceHint?.code ?: "none"}. Target hint: ${targetHint?.code ?: "none"}. Input (quoted JSON string): ${Json.encodeToString(JsonPrimitive.serializer(), JsonPrimitive(text))}"""
             val raw = withTimeout(20_000) { model.generateContent(prompt).text }
                 ?: throw TranslationException(TranslationException.Reason.INVALID_CONTENT)
             return parseTranslation(raw)
@@ -69,6 +69,8 @@ fun parseTranslation(raw: String): TranslationResult {
         fun required(name: String): String = (obj[name] as? JsonPrimitive)
             ?.takeIf { it.isString }?.content?.trim()?.takeIf { it.isNotEmpty() }
             ?: throw IllegalArgumentException()
+        val detectedValue = required("detectedSource")
+        if (detectedValue == "unsupported") throw TranslationException(TranslationException.Reason.UNSUPPORTED_LANGUAGE)
         val candidates = (obj["sourceCandidates"] as? JsonArray)?.map {
             val item = it as? JsonObject ?: throw IllegalArgumentException()
             val languageValue = (item["language"] as? JsonPrimitive)?.takeIf { primitive -> primitive.isString }?.content
@@ -81,7 +83,7 @@ fun parseTranslation(raw: String): TranslationResult {
             SourceCandidate(language, confidence)
         } ?: throw IllegalArgumentException()
         if (candidates.isEmpty() || candidates.size > 3 || candidates.map { it.language }.distinct().size != candidates.size) throw IllegalArgumentException()
-        val detected = required("detectedSource").let { value ->
+        val detected = detectedValue.let { value ->
             if (value == "ambiguous") null else SourceLanguage.entries.firstOrNull { it.code == value } ?: throw IllegalArgumentException()
         }
         val target = Language.entries.firstOrNull { it.code == required("targetLanguage") } ?: throw IllegalArgumentException()
@@ -91,6 +93,8 @@ fun parseTranslation(raw: String): TranslationResult {
         } ?: throw IllegalArgumentException()
         if (meanings.size !in 1..2) throw IllegalArgumentException()
         return TranslationResult(candidates, detected, required("normalizedInput"), required("ukrainian"), meanings, required("example"), target)
+    } catch (problem: TranslationException) {
+        throw problem
     } catch (problem: Exception) {
         throw TranslationException(TranslationException.Reason.INVALID_CONTENT)
     }

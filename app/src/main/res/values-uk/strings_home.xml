@@ -37,4 +37,5 @@
     <string name="home_error_network">Немає з’єднання. Перевірте мережу й повторіть.</string>
     <string name="home_error_unavailable">Переклад зараз недоступний. Спробуйте пізніше.</string>
     <string name="home_error_save">Не вдалося зберегти слово. Перевірте його й повторіть.</string>
+    <string name="home_error_unsupported_language">Використовуйте українську, німецьку або англійську.</string>
 </resources>

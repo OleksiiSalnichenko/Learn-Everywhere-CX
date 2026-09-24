@@ -19,9 +19,13 @@ class GeminiTranslationProviderTest {
             }
         """.trimIndent())
 
+        assertEquals(listOf(SourceCandidate(SourceLanguage.UK, 0.98)), result.sourceCandidates)
         assertEquals(SourceLanguage.UK, result.detectedSource)
         assertEquals(Language.DE, result.targetLanguage)
-        assertEquals(0.98, result.sourceCandidates.single().confidence, 0.0)
+        assertEquals("дім", result.normalizedInput)
+        assertEquals("дім", result.ukrainian)
+        assertEquals(listOf("Haus"), result.foreignMeanings)
+        assertEquals("Das Haus ist warm.", result.example)
     }
 
     @Test fun rejectsQuotedNumericConfidence() {
@@ -34,6 +38,13 @@ class GeminiTranslationProviderTest {
 
     @Test fun rejectsMalformedJson() {
         assertInvalid("{not-json")
+    }
+
+    @Test fun reportsUnsupportedLanguageDistinctly() {
+        val problem = assertThrows(TranslationException::class.java) {
+            parseTranslation(validJson().replace("\"detectedSource\":\"en\"", "\"detectedSource\":\"unsupported\""))
+        }
+        assertEquals(TranslationException.Reason.UNSUPPORTED_LANGUAGE, problem.reason)
     }
 
     private fun assertInvalid(raw: String) {

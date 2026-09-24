@@ -1,16 +1,17 @@
 package com.learneverywhere.app.ui.home
 
 import com.learneverywhere.app.translation.TranslationException
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class HomeStateTest {
-    @Test fun malformedProviderOutputCanBeRetried() {
-        assertTrue(canRetryTranslation(TranslationException.Reason.INVALID_CONTENT))
-    }
-
-    @Test fun invalidUserInputDoesNotOfferPointlessRetry() {
-        assertFalse(canRetryTranslation(TranslationException.Reason.INVALID_INPUT))
+    @Test fun everyTranslationFailureHasAnExplicitRetryPolicy() {
+        val retryable = setOf(
+            TranslationException.Reason.INVALID_CONTENT,
+            TranslationException.Reason.QUOTA,
+            TranslationException.Reason.NETWORK,
+            TranslationException.Reason.UNAVAILABLE,
+        )
+        assertEquals(retryable, TranslationException.Reason.entries.filter(::canRetryTranslation).toSet())
     }
 }
