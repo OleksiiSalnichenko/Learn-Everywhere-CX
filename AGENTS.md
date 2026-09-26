@@ -1,7 +1,7 @@
 <!-- autopilot:start -->
 # Learn Everywhere
 
-Android-застосунок (`com.learneverywhere.app`, minSdk 26) для накопичення німецьких та англійських слів з українським значенням, JSON import/export, голосового або текстового вводу через Firebase AI Logic і фонового аудіоуроку. Локальні словники, налаштування та playback працюють без Firebase-конфігурації.
+Android-застосунок (`com.learneverywhere.cx`, minSdk 26) для накопичення німецьких та англійських слів з українським значенням, JSON import/export, голосового або текстового вводу через Firebase AI Logic і фонового аудіоуроку. Локальні словники, налаштування та playback працюють без Firebase-конфігурації.
 
 ## Команди
 

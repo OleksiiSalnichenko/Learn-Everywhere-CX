@@ -36,14 +36,14 @@ The build does not use a destructive Room migration fallback. Any future schema 
 
 ## Optional Firebase AI Logic setup
 
-The Firebase project and Android registration must match package `com.learneverywhere.app`. Do not put a Gemini server key, App Check debug token, user vocabulary, or any other secret in source control.
+The Firebase project and Android registration must match application ID `com.learneverywhere.cx`. Do not put a Gemini server key, App Check debug token, user vocabulary, or any other secret in source control.
 
 The current Firebase console wizard is paused at **Enable APIs** because that action accepts Gemini API Additional Terms and usage policies. Only the product owner can approve those terms. Do not enable billing; the selected design uses Firebase AI Logic on Spark with `gemini-3.5-flash-lite`.
 
 After the product owner explicitly accepts the legal terms:
 
 1. In Firebase Console, finish AI Logic setup for the existing `learn-everywhere` project without enabling billing.
-2. Download a fresh Android configuration for `com.learneverywhere.app` and save it locally as `app/google-services.json`.
+2. Download a fresh Android configuration for `com.learneverywhere.cx` and save it locally as `app/google-services.json`.
 3. For a debug build, obtain the App Check debug token from local device logs and register it in Firebase Console. Keep the token out of files and commits.
 4. Rebuild the debug APK, install it on the device, enter one Ukrainian, German, and English word, review the destination and translated fields, and press OK once.
 5. Confirm each saved item is in the expected default dictionary. Check that Cancel creates neither a word nor an automatic dictionary.

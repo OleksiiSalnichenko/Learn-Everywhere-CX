@@ -9,7 +9,7 @@ android {
     namespace = "com.learneverywhere.app"
     compileSdk = 37
     defaultConfig {
-        applicationId = "com.learneverywhere.app"
+        applicationId = "com.learneverywhere.cx"
         minSdk = 26
         targetSdk = 37
         versionCode = 1
