@@ -1,7 +1,7 @@
 window.STATE =
 {
   "slug": "learn-everywhere",
-  "dir": "2026-09-14-learn-everywhere--wip",
+  "dir": "2026-09-14-learn-everywhere",
   "title": "Learn Everywhere",
   "mode": "semi",
   "depth": "normal",
@@ -11,8 +11,8 @@ window.STATE =
   "memoryFile": "AGENTS.md",
   "skillDir": "/home/osalnichenko/.agents/skills/autopilot",
   "startedAt": "2026-09-14T20:08:30+02:00",
-  "updatedAt": "2026-09-24T10:19:13+02:00",
-  "finishedAt": null,
+  "updatedAt": "2026-09-26T22:10:26+02:00",
+  "finishedAt": "2026-09-26T22:10:26+02:00",
   "stages": [
     {
       "id": "preflight",
@@ -48,25 +48,30 @@ window.STATE =
     },
     {
       "id": "build",
-      "status": "in-progress",
+      "status": "done",
       "startedAt": "2026-09-15T07:54:25+02:00",
-      "note": "Wave 5: приймальні перевірки й документація"
+      "note": "8 тасків завершено; debug/release/AndroidTest APK, 47 JVM-тестів і lint пройшли.",
+      "finishedAt": "2026-09-26T22:10:26+02:00"
     },
     {
       "id": "review",
-      "status": "in-progress",
+      "status": "done",
       "startedAt": "2026-09-22T11:28:16+02:00",
-      "note": "Рев’ю таску 06 за Manifest/Spec і Craft"
+      "note": "Manifest/Spec/Craft review завершено; фінальні блокери виправлено.",
+      "finishedAt": "2026-09-26T22:10:26+02:00"
     },
     {
       "id": "final",
-      "status": "pending"
+      "status": "done",
+      "startedAt": "2026-09-26T22:10:26+02:00",
+      "finishedAt": "2026-09-26T22:10:26+02:00",
+      "note": "Blind acceptance: код повний; runtime smoke частково відкладено до пристрою/Firebase config."
     }
   ],
   "requirements": {
     "total": 65,
-    "done": 60,
-    "inTicket": 5,
+    "done": 65,
+    "inTicket": 0,
     "inSpec": 0,
     "placeholder": 0,
     "deferred": 0,
@@ -341,17 +346,96 @@ window.STATE =
         "README.md",
         ".github"
       ],
-      "status": "review",
+      "status": "done",
       "retries": 1,
       "repairs": 0,
       "handoffs": 0,
       "file": "06-acceptance.md",
       "startedAt": "2026-09-23T00:45:04+02:00",
-      "executor": "/root/w5_acceptance_resume"
+      "executor": "/root/w5_acceptance_resume",
+      "finishedAt": "2026-09-24T10:19:13+02:00",
+      "tests": "Full build/lint green: 40 JVM tests, AndroidTest APK, 0 lint errors",
+      "commit": "93c4d27"
+    },
+    {
+      "id": "07",
+      "title": "Фінальна якість UI та тестів",
+      "requirements": [
+        "R01",
+        "R03",
+        "R06",
+        "R08",
+        "R10",
+        "R18",
+        "R24",
+        "R37",
+        "R39",
+        "R44"
+      ],
+      "blockedBy": [
+        "06"
+      ],
+      "wave": 6,
+      "zone": [
+        "app/src/main/java/com/learneverywhere/app/ui",
+        "app/src/main/java/com/learneverywhere/app/translation",
+        "app/src/test",
+        "docs",
+        "app/lint.xml"
+      ],
+      "status": "done",
+      "retries": 1,
+      "repairs": 0,
+      "handoffs": 0,
+      "file": "07-final-ui-tests.md",
+      "startedAt": "2026-09-24T10:32:26+02:00",
+      "executor": "/root/final_ui_tests_resume",
+      "finishedAt": "2026-09-26T22:10:26+02:00",
+      "tests": "17 targeted checks; final full suite later reached 47 JVM tests with 0 lint errors",
+      "commit": "63c0703"
+    },
+    {
+      "id": "08",
+      "title": "Фінальне зміцнення playback",
+      "requirements": [
+        "R43",
+        "R44",
+        "R45",
+        "R46"
+      ],
+      "blockedBy": [
+        "06"
+      ],
+      "wave": 6,
+      "zone": [
+        "app/src/main/java/com/learneverywhere/app/playback",
+        "app/src/test/java/com/learneverywhere/app/playback"
+      ],
+      "status": "done",
+      "retries": 2,
+      "repairs": 1,
+      "handoffs": 0,
+      "file": "08-final-playback-hardening.md",
+      "startedAt": "2026-09-24T10:32:26+02:00",
+      "executor": "/root/t08_repair_resume",
+      "finishedAt": "2026-09-26T22:10:26+02:00",
+      "tests": "12 targeted playback checks; final full build: 47 JVM tests, AndroidTest APK, 0 lint errors",
+      "commit": "c0ac758"
     }
   ],
   "singlePass": null,
-  "tests": null,
+  "tests": {
+    "command": "JAVA_HOME=\"$HOME/android-studio/jbr\" ./gradlew :app:assembleDebug :app:assembleRelease :app:testDebugUnitTest :app:assembleDebugAndroidTest :app:lintDebug --no-daemon",
+    "status": "passed",
+    "result": "BUILD SUCCESSFUL; 47 JVM tests; debug/release APK; AndroidTest APK; 0 lint errors",
+    "manualPending": [
+      "SAF import/export and process recreation on Android device",
+      "voice permission/cancel/stop and EN/UK/DE locale plus large font/TalkBack",
+      "TTS playback, notification/lockscreen, audio focus, noisy route and screen-off",
+      "six Room instrumentation tests on a connected device",
+      "live Gemini smoke after explicit terms acceptance and a fresh local google-services.json"
+    ]
+  },
   "debt": {
     "placeholders": [],
     "assumptions": [
@@ -494,26 +578,113 @@ window.STATE =
       "file": "PlaybackPlanTest.kt:50-58",
       "finding": "Shuffle permutation test should assert count or multiset, not only unique IDs"
     },
-    {"ticket":"05","axis":"spec","file":"PlaybackService.kt:94","finding":"STATE_ENDED can finish while bounded prefetch is still preparing later events"},
-    {"ticket":"05","axis":"spec","file":"PlaybackService.kt:99","finding":"Direct MediaSession transport can bypass audio-focus and stop lifecycle handlers"},
-    {"ticket":"05","axis":"spec","file":"AudioPreparer.kt:37","finding":"Prepared in-flight batch files need protection before enqueue"},
-    {"ticket":"05","axis":"spec","file":"PlaybackService.kt:182","finding":"Live phase must come from typed event semantics instead of text equality"},
-    {"ticket":"05","axis":"craft","file":"PlaybackQueueTest.kt:18","finding":"Failed-synthesis test needs a post-failure sentinel and explicit returned-problem assertion"},
-    {"ticket":"05","axis":"craft","file":"AudioPreparer.kt:96","finding":"Cancellation or thrown synth calls must clean callbacks and temporary files in finally"},
-    {"ticket":"05","axis":"craft","file":"AudioPreparer.kt:105","finding":"Every prepared batch file must stay protected until player ownership"},
-    {"ticket":"05","axis":"craft","file":"PlaybackService.kt:157","finding":"Consumed items should be removed so long sessions do not pin the full cache"},
-    {"ticket":"05","axis":"craft","file":"PlaybackService.kt:89","finding":"All play/pause transitions need one complete audio-focus policy"},
-    {"ticket":"05","axis":"craft","file":"PlaybackService.kt:126","finding":"All preparation exits must publish actionable state and settle foreground ownership"},
-    {"ticket":"05","axis":"craft","file":"PlaybackService.kt:183","finding":"Prepared segments need explicit phase identity"},
-    {"ticket":"05","axis":"craft","file":"MainActivity.kt:97","finding":"Player card visibility must consistently use session snapshot or explicitly update service state"},
-    {"ticket":"05","axis":"craft","file":"PlaybackController.kt:35","finding":"Controller connections need timeout, cancellation and surfaced failure"},
-    {"ticket":"05","axis":"device","file":"Android runtime","finding":"Screen-off playback, live TTS voices and notification/lockscreen sync require a connected device"}
+    {
+      "ticket": "05",
+      "axis": "spec",
+      "file": "PlaybackService.kt:94",
+      "finding": "STATE_ENDED can finish while bounded prefetch is still preparing later events"
+    },
+    {
+      "ticket": "05",
+      "axis": "spec",
+      "file": "PlaybackService.kt:99",
+      "finding": "Direct MediaSession transport can bypass audio-focus and stop lifecycle handlers"
+    },
+    {
+      "ticket": "05",
+      "axis": "spec",
+      "file": "AudioPreparer.kt:37",
+      "finding": "Prepared in-flight batch files need protection before enqueue"
+    },
+    {
+      "ticket": "05",
+      "axis": "spec",
+      "file": "PlaybackService.kt:182",
+      "finding": "Live phase must come from typed event semantics instead of text equality"
+    },
+    {
+      "ticket": "05",
+      "axis": "craft",
+      "file": "PlaybackQueueTest.kt:18",
+      "finding": "Failed-synthesis test needs a post-failure sentinel and explicit returned-problem assertion"
+    },
+    {
+      "ticket": "05",
+      "axis": "craft",
+      "file": "AudioPreparer.kt:96",
+      "finding": "Cancellation or thrown synth calls must clean callbacks and temporary files in finally"
+    },
+    {
+      "ticket": "05",
+      "axis": "craft",
+      "file": "AudioPreparer.kt:105",
+      "finding": "Every prepared batch file must stay protected until player ownership"
+    },
+    {
+      "ticket": "05",
+      "axis": "craft",
+      "file": "PlaybackService.kt:157",
+      "finding": "Consumed items should be removed so long sessions do not pin the full cache"
+    },
+    {
+      "ticket": "05",
+      "axis": "craft",
+      "file": "PlaybackService.kt:89",
+      "finding": "All play/pause transitions need one complete audio-focus policy"
+    },
+    {
+      "ticket": "05",
+      "axis": "craft",
+      "file": "PlaybackService.kt:126",
+      "finding": "All preparation exits must publish actionable state and settle foreground ownership"
+    },
+    {
+      "ticket": "05",
+      "axis": "craft",
+      "file": "PlaybackService.kt:183",
+      "finding": "Prepared segments need explicit phase identity"
+    },
+    {
+      "ticket": "05",
+      "axis": "craft",
+      "file": "MainActivity.kt:97",
+      "finding": "Player card visibility must consistently use session snapshot or explicitly update service state"
+    },
+    {
+      "ticket": "05",
+      "axis": "craft",
+      "file": "PlaybackController.kt:35",
+      "finding": "Controller connections need timeout, cancellation and surfaced failure"
+    },
+    {
+      "ticket": "05",
+      "axis": "device",
+      "file": "Android runtime",
+      "finding": "Screen-off playback, live TTS voices and notification/lockscreen sync require a connected device"
+    }
   ],
   "reviewers": {
     "manifestSpec": "/root/w2_library_review",
     "craft": "/root/w2_craft_review"
   },
-  "blind": null,
+  "blind": {
+    "status": "partial-runtime",
+    "reviewer": "/root/final_blind",
+    "implementationMissing": [],
+    "summary": "Усі функціональні вимоги знайдено в коді; частковий статус спричинений лише відсутністю Android-пристрою та Firebase-конфігурації для живого smoke.",
+    "verified": [
+      "Home intake and confirmation flow",
+      "Room dictionaries/defaults and JSON transfer",
+      "Settings, locales and themes",
+      "Playback plan, MediaSession, TTS and background-service wiring",
+      "Resonance light/dark visual system, icon and splash",
+      "Mermaid Software Design documentation"
+    ],
+    "runtimeGaps": [
+      "voice and screen-off/lockscreen playback require a connected Android device",
+      "live Firebase translation requires explicit Gemini terms acceptance and a fresh google-services.json"
+    ]
+  },
   "stitch": {
     "projectId": "13006564547979315790",
     "url": "https://stitch.withgoogle.com/projects/13006564547979315790",
@@ -644,6 +815,24 @@ window.STATE =
       "tests": "Full debug/release/unit/AndroidTest APK build passed; 40 unit tests total, 3 Ticket05 tests passed; physical-device playback smoke unavailable",
       "commit": "68fa940",
       "pushedAt": "2026-09-23T00:45:04+02:00"
+    },
+    "06": {
+      "manifestSpecVerdict": "passed",
+      "craftVerdict": "passed",
+      "tests": "Full build/lint green: 40 JVM tests at ticket completion, AndroidTest APK, 0 lint errors",
+      "commit": "93c4d27"
+    },
+    "07": {
+      "manifestSpecVerdict": "clean",
+      "craftVerdict": "blocking findings fixed; two report-only observations retained",
+      "tests": "17 targeted checks; final suite later reached 47 JVM tests",
+      "commit": "63c0703"
+    },
+    "08": {
+      "manifestSpecVerdict": "clean-after-repair",
+      "craftVerdict": "blocking findings fixed; generic failure-fallback observation retained",
+      "tests": "12 targeted playback checks; final full build 47 JVM tests and 0 lint errors",
+      "commit": "c0ac758"
     }
   },
   "wave1Commit": "3224f03",
@@ -672,5 +861,26 @@ window.STATE =
     "finishedAt": "2026-09-15T23:21:27+02:00",
     "tests": "Eight repository tests passed; full Wave2 build 18 unit tests, debug/release/test APK passed",
     "review": "ticket02 Manifest+Spec reviewer confirmed coherent one-transaction export"
+  },
+  "concernTriage": {
+    "fixedNow": [
+      "Library list/detail default-card behavior and Home preview clarity",
+      "unsupported-language state, example contract and speech-session lifecycle",
+      "large-font settings dialogs, active-dictionary stop scoping and stronger boundary tests",
+      "bounded playback continuation, cache leases, synthesis cleanup and queue pruning",
+      "audio-focus transitions, preparation settlement, typed phases and controller timeout"
+    ],
+    "staleOrResolved": [
+      "direct MediaSession transport bypass",
+      "player-card showCard behavior"
+    ],
+    "reportOnly": [
+      "abandoned SAF pending-export files have no expiry cleanup",
+      "Firebase error classification still relies on exception message text",
+      "malformed unsupported Gemini payload may classify as unsupported before all structural checks",
+      "typed playback control failures also carry a generic SYNTHESIS_FAILED fallback",
+      "13 dependency-update lint warnings",
+      "device and live-Firebase runtime smoke remain pending"
+    ]
   }
 }
