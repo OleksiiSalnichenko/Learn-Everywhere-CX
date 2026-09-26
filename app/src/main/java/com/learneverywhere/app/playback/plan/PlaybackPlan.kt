@@ -5,10 +5,21 @@ import com.learneverywhere.app.settings.AppSettings
 import kotlin.random.Random
 
 enum class SpeechLanguage { UK, DE, EN }
+enum class PlaybackEventPhase { UKRAINIAN, TRANSLATION, EXAMPLE, SILENCE }
 
-sealed interface PlaybackEvent { val wordId: String }
-data class Speak(val text: String, val language: SpeechLanguage, override val wordId: String) : PlaybackEvent
-data class Silence(val durationMs: Long, override val wordId: String) : PlaybackEvent
+sealed interface PlaybackEvent {
+    val wordId: String
+    val phase: PlaybackEventPhase
+}
+data class Speak(
+    val text: String,
+    val language: SpeechLanguage,
+    override val wordId: String,
+    override val phase: PlaybackEventPhase = if (language == SpeechLanguage.UK) PlaybackEventPhase.UKRAINIAN else PlaybackEventPhase.TRANSLATION,
+) : PlaybackEvent
+data class Silence(val durationMs: Long, override val wordId: String) : PlaybackEvent {
+    override val phase = PlaybackEventPhase.SILENCE
+}
 
 data class PlaybackWord(
     val id: String,
@@ -63,7 +74,7 @@ object PlaybackPlan {
         }
         if (settings.includeExample) {
             add(Silence(settings.beforeExampleSeconds * 1_000L, word.id))
-            add(Speak(word.example, learningLanguage, word.id))
+            add(Speak(word.example, learningLanguage, word.id, PlaybackEventPhase.EXAMPLE))
         }
     }
 }

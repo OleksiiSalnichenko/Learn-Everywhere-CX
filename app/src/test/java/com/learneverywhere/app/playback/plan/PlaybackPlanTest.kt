@@ -37,8 +37,16 @@ class PlaybackPlanTest {
             Speak("Haus", SpeechLanguage.DE, "a"), Silence(4_000, "a"), Speak("Zuhause", SpeechLanguage.DE, "a"),
             Silence(4_000, "a"),
             Speak("Haus", SpeechLanguage.DE, "a"), Silence(4_000, "a"), Speak("Zuhause", SpeechLanguage.DE, "a"),
-            Silence(5_000, "a"), Speak("Das ist ein Haus.", SpeechLanguage.DE, "a"),
+            Silence(5_000, "a"), Speak("Das ist ein Haus.", SpeechLanguage.DE, "a", PlaybackEventPhase.EXAMPLE),
         ), events)
+        assertEquals(listOf(
+            PlaybackEventPhase.UKRAINIAN, PlaybackEventPhase.SILENCE, PlaybackEventPhase.UKRAINIAN,
+            PlaybackEventPhase.SILENCE,
+            PlaybackEventPhase.TRANSLATION, PlaybackEventPhase.SILENCE, PlaybackEventPhase.TRANSLATION,
+            PlaybackEventPhase.SILENCE,
+            PlaybackEventPhase.TRANSLATION, PlaybackEventPhase.SILENCE, PlaybackEventPhase.TRANSLATION,
+            PlaybackEventPhase.SILENCE, PlaybackEventPhase.EXAMPLE,
+        ), events.map { it.phase })
     }
 
     @Test fun `non loop omits final after-word silence while loop includes it`() {

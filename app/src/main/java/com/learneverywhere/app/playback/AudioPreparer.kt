@@ -57,18 +57,44 @@ class AudioFileCache(private val directory: File, private val maximumBytes: Long
         .digest(value.toByteArray()).joinToString("") { "%02x".format(it) }
 }
 
+internal class SynthesisRequestRegistry(private val timeoutMillis: Long) {
+    private val requests = ConcurrentHashMap<String, CompletableDeferred<Boolean>>()
+
+    suspend fun run(temporary: File, enqueue: (String) -> Boolean): Boolean {
+        val id = UUID.randomUUID().toString()
+        val completion = CompletableDeferred<Boolean>()
+        requests[id] = completion
+        var keepTemporary = false
+        try {
+            if (!enqueue(id)) return false
+            keepTemporary = withTimeoutOrNull(timeoutMillis) { completion.await() } == true
+            return keepTemporary
+        } finally {
+            requests.remove(id)?.cancel()
+            if (!keepTemporary) temporary.delete()
+        }
+    }
+
+    fun complete(id: String, success: Boolean): Boolean = requests[id]?.complete(success) == true
+
+    fun cancelAll() {
+        requests.values.forEach { it.cancel() }
+        requests.clear()
+    }
+}
+
 class AndroidAudioPreparer(context: Context, private val cache: AudioFileCache) : AutoCloseable {
     private val mutex = Mutex()
-    private val callbacks = ConcurrentHashMap<String, CompletableDeferred<Boolean>>()
+    private val requests = SynthesisRequestRegistry(TTS_TIMEOUT_MS)
     private val ready = CompletableDeferred<Boolean>()
     private val tts = TextToSpeech(context.applicationContext) { status -> ready.complete(status == TextToSpeech.SUCCESS) }
 
     init {
         tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
             override fun onStart(utteranceId: String?) = Unit
-            override fun onDone(utteranceId: String?) { utteranceId?.let { callbacks.remove(it)?.complete(true) } }
-            @Deprecated("Deprecated in Java") override fun onError(utteranceId: String?) { utteranceId?.let { callbacks.remove(it)?.complete(false) } }
-            override fun onError(utteranceId: String?, errorCode: Int) { utteranceId?.let { callbacks.remove(it)?.complete(false) } }
+            override fun onDone(utteranceId: String?) { utteranceId?.let { requests.complete(it, true) } }
+            @Deprecated("Deprecated in Java") override fun onError(utteranceId: String?) { utteranceId?.let { requests.complete(it, false) } }
+            override fun onError(utteranceId: String?, errorCode: Int) { utteranceId?.let { requests.complete(it, false) } }
         })
     }
 
@@ -91,12 +117,9 @@ class AndroidAudioPreparer(context: Context, private val cache: AudioFileCache) 
         val key = "speech|${event.language}|$voiceId|1.0|${event.text}"
         cache.get(key)?.let { return PreparedMedia.Ready(it.absolutePath) }
         val temporary = cache.temporaryFile()
-        val utteranceId = UUID.randomUUID().toString()
-        val callback = CompletableDeferred<Boolean>()
-        callbacks[utteranceId] = callback
-        val queued = tts.synthesizeToFile(event.text, null, temporary, utteranceId) == TextToSpeech.SUCCESS
-        val success = queued && withTimeoutOrNull(TTS_TIMEOUT_MS) { callback.await() } == true
-        callbacks.remove(utteranceId)
+        val success = requests.run(temporary) { utteranceId ->
+            tts.synthesizeToFile(event.text, null, temporary, utteranceId) == TextToSpeech.SUCCESS
+        }
         if (!success || !temporary.isFile || temporary.length() == 0L) {
             temporary.delete()
             return PreparedMedia.Failure(PreparationProblem.SYNTHESIS_FAILED)
@@ -137,5 +160,5 @@ class AndroidAudioPreparer(context: Context, private val cache: AudioFileCache) 
 
     private companion object { const val TTS_TIMEOUT_MS = 60_000L }
 
-    override fun close() { callbacks.values.forEach { it.cancel() }; callbacks.clear(); tts.stop(); tts.shutdown() }
+    override fun close() { requests.cancelAll(); tts.stop(); tts.shutdown() }
 }

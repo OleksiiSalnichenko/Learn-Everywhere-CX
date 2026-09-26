@@ -22,6 +22,7 @@ object PlaybackBatchPreparer {
         startIndex: Int,
         maximumEvents: Int,
         prepareEvent: suspend (PlaybackEvent) -> PreparedMedia,
+        protectPreparedPaths: (Set<String>) -> Unit = {},
     ): PreparedBatch {
         require(startIndex in 0..events.size)
         require(maximumEvents > 0)
@@ -29,7 +30,10 @@ object PlaybackBatchPreparer {
         val prepared = ArrayList<PreparedSegment>(end - startIndex)
         for (index in startIndex until end) {
             when (val item = prepareEvent(events[index])) {
-                is PreparedMedia.Ready -> prepared += PreparedSegment(index, events[index], item.path)
+                is PreparedMedia.Ready -> {
+                    prepared += PreparedSegment(index, events[index], item.path)
+                    protectPreparedPaths(prepared.mapTo(linkedSetOf()) { it.path })
+                }
                 is PreparedMedia.Failure -> return PreparedBatch.Failed(index, item.problem)
             }
         }
